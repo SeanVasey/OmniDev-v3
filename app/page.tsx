@@ -13,6 +13,7 @@ import { useChatStore } from '@/stores/chatStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useDatabaseSync } from '@/hooks/useDatabaseSync';
+import { useFileUpload } from '@/hooks/useFileUpload';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
 
 const mockModel: AIModel = {
@@ -82,6 +83,7 @@ export default function HomePage() {
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
   const { currentChatId, chats, messages: storedMessages, setCurrentChat } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
+  const { upload: uploadFiles, isUploading } = useFileUpload();
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
@@ -145,16 +147,21 @@ export default function HomePage() {
     const finalMessage =
       context === 'image' && aspectRatio ? `${message} [Aspect Ratio: ${aspectRatio}]` : message;
 
-    // Handle file attachments
+    // Upload file attachments
+    let uploadedFiles: any[] = [];
     if (attachments.length > 0) {
-      toast.info(`${attachments.length} file(s) attached`, {
-        description: 'File upload coming soon',
-      });
+      toast.info(`Uploading ${attachments.length} file(s)...`);
+      uploadedFiles = await uploadFiles(attachments);
+
+      if (uploadedFiles.length === 0) {
+        // Upload failed, don't proceed
+        return;
+      }
     }
 
-    // Save user message to database
+    // Save user message to database with attachments
     if (chatId && chatId !== 'temp') {
-      await saveMessage(chatId, 'user', finalMessage, []);
+      await saveMessage(chatId, 'user', finalMessage, uploadedFiles);
     }
 
     // Submit to AI
@@ -225,7 +232,7 @@ export default function HomePage() {
           onSubmit={handleComposerSubmit}
           isIncognito={isIncognitoMode}
           onIncognitoToggle={toggleIncognitoMode}
-          disabled={isLoading}
+          disabled={isLoading || isUploading}
         />
       </main>
 
