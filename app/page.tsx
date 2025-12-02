@@ -14,6 +14,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useDatabaseSync } from '@/hooks/useDatabaseSync';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { useImageGeneration } from '@/hooks/useImageGeneration';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
 
 const mockModel: AIModel = {
@@ -81,9 +82,10 @@ export default function HomePage() {
 
   const { user } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
-  const { currentChatId, chats, messages: storedMessages, setCurrentChat } = useChatStore();
+  const { currentChatId, chats, messages: storedMessages, setCurrentChat, addMessage } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
   const { upload: uploadFiles, isUploading } = useFileUpload();
+  const { generateImage, isGenerating } = useImageGeneration();
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
@@ -164,7 +166,29 @@ export default function HomePage() {
       await saveMessage(chatId, 'user', finalMessage, uploadedFiles);
     }
 
-    // Submit to AI
+    // Handle image generation mode
+    if (context === 'image') {
+      const generatedImage = await generateImage(message, aspectRatio || '1:1');
+
+      if (generatedImage && chatId && chatId !== 'temp') {
+        // Save the generated image as an assistant message
+        const imageMessage = `![Generated Image](${generatedImage.imageUrl})\n\n**Revised Prompt:** ${generatedImage.revisedPrompt || message}`;
+        await saveMessage(chatId, 'assistant', imageMessage, []);
+
+        // Add to local messages for immediate display
+        const newMessage: MessageType = {
+          id: `msg_${Date.now()}`,
+          chat_id: chatId,
+          role: 'assistant',
+          content: imageMessage,
+          created_at: new Date().toISOString(),
+        };
+        addMessage(chatId, newMessage);
+      }
+      return; // Don't submit to chat API for image generation
+    }
+
+    // Submit to AI for regular chat
     const syntheticEvent = {
       preventDefault: () => {},
     } as React.FormEvent<HTMLFormElement>;
@@ -232,7 +256,7 @@ export default function HomePage() {
           onSubmit={handleComposerSubmit}
           isIncognito={isIncognitoMode}
           onIncognitoToggle={toggleIncognitoMode}
-          disabled={isLoading || isUploading}
+          disabled={isLoading || isUploading || isGenerating}
         />
       </main>
 
