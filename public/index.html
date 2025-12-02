@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniDev V3.0 - Multi-Provider LLM Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .provider-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .provider-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .provider-info h3 {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .provider-info .company {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .provider-details {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .status-configured {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-ready {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .doc-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .doc-link:hover {
+            background: #e0e0e0;
+        }
+
+        .features {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 60px;
+        }
+
+        .features h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .feature p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .github-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s ease;
+        }
+
+        .github-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1.2em;
+            }
+
+            .providers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 OmniDev V3.0</h1>
+            <p class="subtitle">Multi-Provider LLM Framework for TypeScript</p>
+            <div class="badges">
+                <span class="badge">✅ 8 Providers</span>
+                <span class="badge">🧪 21 Tests Passing</span>
+                <span class="badge">📦 89% Coverage</span>
+                <span class="badge">🎨 SVG Icons</span>
+            </div>
+        </header>
+
+        <div class="features">
+            <h2>✨ Features</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Unified API</h3>
+                    <p>Single interface for all LLM providers with automatic routing</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Type-Safe</h3>
+                    <p>Full TypeScript support with strict mode and type checking</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Configurable</h3>
+                    <p>Environment variables, validation, and flexible configuration</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🧪</div>
+                    <h3>Well-Tested</h3>
+                    <p>Comprehensive test suite with 89% code coverage</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="text-align: center; color: white; font-size: 2.5em; margin-bottom: 40px;">Supported Providers</h2>
+
+        <div class="providers-grid">
+            <!-- OpenAI -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/openai.svg" alt="OpenAI" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>OpenAI</h3>
+                        <p class="company">GPT-4, GPT-3.5</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">gpt-4-turbo</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-configured">✅ Configured</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Streaming:</span>
+                        <span class="detail-value">✅ Yes</span>
+                    </div>
+                </div>
+                <a href="https://platform.openai.com/docs" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Claude -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/claude.svg" alt="Claude" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>Claude</h3>
+                        <p class="company">Anthropic</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">claude-3-5-sonnet</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-ready">⏳ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Context:</span>
+                        <span class="detail-value">200K tokens</span>
+                    </div>
+                </div>
+                <a href="https://docs.anthropic.com" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Gemini -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/gemini.svg" alt="Gemini" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>Gemini</h3>
+                        <p class="company">Google</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">gemini-1.5-pro</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-ready">⏳ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Context:</span>
+                        <span class="detail-value">1M tokens</span>
+                    </div>
+                </div>
+                <a href="https://ai.google.dev/docs" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Grok -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/grok.svg" alt="Grok" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>Grok</h3>
+                        <p class="company">xAI</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">grok-beta</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-ready">⏳ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Feature:</span>
+                        <span class="detail-value">Real-time data</span>
+                    </div>
+                </div>
+                <a href="https://docs.x.ai" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Mistral -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/mistral.svg" alt="Mistral" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>Mistral</h3>
+                        <p class="company">Mistral AI</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">mistral-large</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-ready">⏳ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Context:</span>
+                        <span class="detail-value">32K tokens</span>
+                    </div>
+                </div>
+                <a href="https://docs.mistral.ai" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Perplexity -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/perplexity.svg" alt="Perplexity" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>Perplexity</h3>
+                        <p class="company">Perplexity AI</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">sonar-large</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-ready">⏳ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Feature:</span>
+                        <span class="detail-value">Web search</span>
+                    </div>
+                </div>
+                <a href="https://docs.perplexity.ai" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Meta -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/meta.svg" alt="Meta" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>Meta LLaMA</h3>
+                        <p class="company">Meta AI</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">LLaMA 3.1 70B</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-ready">⏳ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Type:</span>
+                        <span class="detail-value">Open source</span>
+                    </div>
+                </div>
+                <a href="https://llama.meta.com" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+
+            <!-- Local LLaMA -->
+            <div class="provider-card">
+                <div class="provider-header">
+                    <img src="assets/icons/llama.svg" alt="LLaMA Local" class="provider-icon">
+                    <div class="provider-info">
+                        <h3>LLaMA Local</h3>
+                        <p class="company">Ollama/LM Studio</p>
+                    </div>
+                </div>
+                <div class="provider-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">llama3.1</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="status-badge status-configured">✅ Ready</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Key:</span>
+                        <span class="detail-value">Not required</span>
+                    </div>
+                </div>
+                <a href="https://ollama.ai/docs" class="doc-link" target="_blank">📚 Documentation</a>
+            </div>
+        </div>
+
+        <footer>
+            <p style="font-size: 1.2em; margin-bottom: 10px;">Built with TypeScript, tested with Vitest, documented with TypeDoc</p>
+            <p style="opacity: 0.9;">Production-ready LLM framework with comprehensive provider support</p>
+            <a href="https://github.com/SeanVasey/OmniDev-v3" class="github-link" target="_blank">
+                🔗 View on GitHub
+            </a>
+        </footer>
+    </div>
+</body>
+</html>

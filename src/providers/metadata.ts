@@ -7,6 +7,7 @@ export interface ProviderMetadata {
   displayName: string;
   company: string;
   icon: string; // Emoji or icon identifier
+  svgIcon: string; // Path to SVG icon file
   color: string; // Brand color
   defaultEndpoint: string;
   defaultModel: string;
@@ -21,7 +22,8 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'GPT (OpenAI)',
     company: 'OpenAI',
     icon: '🤖',
-    color: '#00A67E',
+    svgIcon: '/assets/icons/openai.svg',
+    color: '#10A37F',
     defaultEndpoint: 'https://api.openai.com/v1/chat/completions',
     defaultModel: 'gpt-4-turbo',
     supportsStreaming: true,
@@ -33,6 +35,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'Claude',
     company: 'Anthropic',
     icon: '🧠',
+    svgIcon: '/assets/icons/claude.svg',
     color: '#D97757',
     defaultEndpoint: 'https://api.anthropic.com/v1/messages',
     defaultModel: 'claude-3-5-sonnet-20241022',
@@ -45,6 +48,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'Gemini',
     company: 'Google',
     icon: '💎',
+    svgIcon: '/assets/icons/gemini.svg',
     color: '#4285F4',
     defaultEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
     defaultModel: 'gemini-1.5-pro',
@@ -57,6 +61,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'Grok',
     company: 'xAI',
     icon: '⚡',
+    svgIcon: '/assets/icons/grok.svg',
     color: '#000000',
     defaultEndpoint: 'https://api.x.ai/v1/chat/completions',
     defaultModel: 'grok-beta',
@@ -69,6 +74,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'Mistral',
     company: 'Mistral AI',
     icon: '🌬️',
+    svgIcon: '/assets/icons/mistral.svg',
     color: '#FF6B35',
     defaultEndpoint: 'https://api.mistral.ai/v1/chat/completions',
     defaultModel: 'mistral-large-latest',
@@ -81,6 +87,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'Perplexity',
     company: 'Perplexity AI',
     icon: '🔍',
+    svgIcon: '/assets/icons/perplexity.svg',
     color: '#1FB0FF',
     defaultEndpoint: 'https://api.perplexity.ai/chat/completions',
     defaultModel: 'llama-3.1-sonar-large-128k-online',
@@ -93,6 +100,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'LLaMA (Meta)',
     company: 'Meta',
     icon: '🦙',
+    svgIcon: '/assets/icons/meta.svg',
     color: '#0668E1',
     defaultEndpoint: 'https://api.together.xyz/v1/chat/completions',
     defaultModel: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
@@ -105,6 +113,7 @@ export const PROVIDER_METADATA: Record<string, ProviderMetadata> = {
     displayName: 'LLaMA (Local)',
     company: 'Local Inference',
     icon: '🏠',
+    svgIcon: '/assets/icons/llama.svg',
     color: '#6B7280',
     defaultEndpoint: 'http://localhost:11434/v1/chat/completions',
     defaultModel: 'llama3.1',
