@@ -15,18 +15,9 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { useDatabaseSync } from '@/hooks/useDatabaseSync';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
+import { getModel } from '@/lib/ai/models';
+import { getWorkspaces } from '@/lib/supabase/database';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
-
-const mockModel: AIModel = {
-  id: 'gpt-5.1',
-  name: 'GPT-5.1',
-  provider: 'openai',
-  contextWindow: 256000,
-  supportsStreaming: true,
-  supportsVision: true,
-  supportsImageGen: false,
-  maxTokens: 32768,
-};
 
 const mockProjects: Project[] = [
   {
@@ -77,15 +68,36 @@ const mockChats: Chat[] = [
 ];
 
 export default function HomePage() {
-  const [currentModel] = useState(mockModel);
+  // Initialize with GPT-4o (most reliable default)
+  const [currentModel, setCurrentModel] = useState<AIModel>(
+    getModel('gpt-4o') || getModel('gpt-5.1')!
+  );
   const [activeContext, setActiveContext] = useState<ContextMode>(null);
+  const [workspaces, setWorkspaces] = useState<Project[]>([]);
 
-  const { user } = useAuth();
+  const { user, userId, isGuest } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
   const { currentChatId, chats, messages: storedMessages, setCurrentChat, addMessage } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
   const { upload: uploadFiles, isUploading } = useFileUpload();
   const { generateImage, isGenerating } = useImageGeneration();
+
+  // Load workspaces on mount
+  useEffect(() => {
+    const loadWorkspaces = async () => {
+      const fetchedWorkspaces = await getWorkspaces(userId);
+      setWorkspaces(fetchedWorkspaces);
+    };
+    loadWorkspaces();
+  }, [userId]);
+
+  // Handle model change
+  const handleModelChange = (model: AIModel) => {
+    setCurrentModel(model);
+    toast.success(`Switched to ${model.name}`, {
+      description: `${(model.contextWindow / 1000).toFixed(0)}K context window`,
+    });
+  };
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
@@ -230,6 +242,7 @@ export default function HomePage() {
         <ModelSelector
           currentModel={currentModel}
           isIncognito={isIncognitoMode}
+          onModelChange={handleModelChange}
           onIncognitoToggle={toggleIncognitoMode}
           onMenuOpen={() => setSidebarOpen(true)}
         />
@@ -237,8 +250,8 @@ export default function HomePage() {
         {/* Mobile Sidebar */}
         <MobileSidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)}>
           <SidebarContent
-            projects={mockProjects}
-            recentChats={chats.length > 0 ? chats : mockChats}
+            projects={workspaces.length > 0 ? workspaces : (isGuest ? mockProjects : [])}
+            recentChats={chats.length > 0 ? chats : (isGuest ? mockChats : [])}
             user={user}
             onNewChat={handleNewChat}
             onSelectChat={handleSelectChat}

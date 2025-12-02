@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from './client';
-import type { Chat, Message, ContextMode, AspectRatio } from '@/types';
+import type { Chat, Message, ContextMode, AspectRatio, Project } from '@/types';
 import type { Database } from '@/types/database.types';
 
 type DbChat = Database['public']['Tables']['chats']['Row'];
@@ -244,8 +244,184 @@ export async function deleteMessage(messageId: string): Promise<boolean> {
 }
 
 // ============================================================================
+// Workspace Operations
+// ============================================================================
+
+type DbWorkspace = Database['public']['Tables']['workspaces']['Row'];
+type DbWorkspaceInsert = Database['public']['Tables']['workspaces']['Insert'];
+
+export async function createWorkspace(
+  ownerId: string,
+  name: string,
+  options?: {
+    description?: string;
+    color?: string;
+    icon?: string;
+  }
+): Promise<Project | null> {
+  if (!isSupabaseConfigured()) {
+    console.log('Supabase not configured. Cannot create workspace.');
+    return null;
+  }
+
+  try {
+    const supabase = createClient();
+    const newWorkspace: DbWorkspaceInsert = {
+      owner_id: ownerId,
+      name,
+      description: options?.description,
+      color: options?.color || 'orange',
+      icon: options?.icon || 'folder',
+    };
+
+    const { data, error } = await supabase
+      .from('workspaces')
+      .insert(newWorkspace)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating workspace:', error);
+      return null;
+    }
+
+    return dbWorkspaceToProject(data);
+  } catch (error) {
+    console.error('Exception creating workspace:', error);
+    return null;
+  }
+}
+
+export async function getWorkspaces(userId: string, includeArchived = false): Promise<Project[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  try {
+    const supabase = createClient();
+    let query = supabase
+      .from('workspaces')
+      .select('*')
+      .eq('owner_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (!includeArchived) {
+      query = query.eq('is_archived', false);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching workspaces:', error);
+      return [];
+    }
+
+    return data.map(dbWorkspaceToProject);
+  } catch (error) {
+    console.error('Exception fetching workspaces:', error);
+    return [];
+  }
+}
+
+export async function getWorkspaceById(workspaceId: string): Promise<Project | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('workspaces')
+      .select('*')
+      .eq('id', workspaceId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching workspace:', error);
+      return null;
+    }
+
+    return dbWorkspaceToProject(data);
+  } catch (error) {
+    console.error('Exception fetching workspace:', error);
+    return null;
+  }
+}
+
+export async function updateWorkspace(
+  workspaceId: string,
+  updates: Partial<Project>
+): Promise<Project | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('workspaces')
+      .update({
+        name: updates.name,
+        description: updates.description,
+        color: updates.color,
+        icon: updates.icon,
+        is_archived: updates.is_archived,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', workspaceId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating workspace:', error);
+      return null;
+    }
+
+    return dbWorkspaceToProject(data);
+  } catch (error) {
+    console.error('Exception updating workspace:', error);
+    return null;
+  }
+}
+
+export async function deleteWorkspace(workspaceId: string): Promise<boolean> {
+  if (!isSupabaseConfigured()) {
+    return false;
+  }
+
+  try {
+    const supabase = createClient();
+    const { error } = await supabase.from('workspaces').delete().eq('id', workspaceId);
+
+    if (error) {
+      console.error('Error deleting workspace:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Exception deleting workspace:', error);
+    return false;
+  }
+}
+
+// ============================================================================
 // Helper Functions - Type Conversions
 // ============================================================================
+
+function dbWorkspaceToProject(dbWorkspace: DbWorkspace): Project {
+  return {
+    id: dbWorkspace.id,
+    owner_id: dbWorkspace.owner_id,
+    name: dbWorkspace.name,
+    description: dbWorkspace.description ?? undefined,
+    color: dbWorkspace.color ?? undefined,
+    icon: dbWorkspace.icon ?? undefined,
+    is_archived: dbWorkspace.is_archived,
+    created_at: dbWorkspace.created_at,
+    updated_at: dbWorkspace.updated_at,
+  };
+}
 
 function dbChatToChat(dbChat: DbChat): Chat {
   return {
