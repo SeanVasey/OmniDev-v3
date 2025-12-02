@@ -1,7 +1,37 @@
 import type { AIModel } from '@/types';
 
 export const AI_MODELS: Record<string, AIModel> = {
-  // OpenAI
+  // OpenAI - o1 Series (Reasoning Models)
+  o1: {
+    id: 'o1',
+    name: 'o1',
+    provider: 'openai',
+    contextWindow: 200000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    maxTokens: 100000,
+  },
+  'o1-mini': {
+    id: 'o1-mini',
+    name: 'o1-mini',
+    provider: 'openai',
+    contextWindow: 128000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    maxTokens: 65536,
+  },
+  'o1-pro': {
+    id: 'o1-pro',
+    name: 'o1-pro',
+    provider: 'openai',
+    contextWindow: 200000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    maxTokens: 100000,
+  },
   'gpt-4o': {
     id: 'gpt-4o',
     name: 'GPT-4o',
@@ -10,17 +40,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
-    maxTokens: 4096,
-  },
-  'gpt-4-turbo': {
-    id: 'gpt-4-turbo',
-    name: 'GPT-4 Turbo',
-    provider: 'openai',
-    contextWindow: 128000,
-    supportsStreaming: true,
-    supportsVision: true,
-    supportsImageGen: false,
-    maxTokens: 4096,
+    maxTokens: 16384,
   },
   'dall-e-3': {
     id: 'dall-e-3',

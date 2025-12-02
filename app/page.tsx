@@ -14,14 +14,14 @@ import { useUIStore } from '@/stores/uiStore';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
 
 const mockModel: AIModel = {
-  id: 'gpt-4o',
-  name: 'GPT-4o',
+  id: 'o1',
+  name: 'o1',
   provider: 'openai',
-  contextWindow: 128000,
+  contextWindow: 200000,
   supportsStreaming: true,
   supportsVision: true,
   supportsImageGen: false,
-  maxTokens: 4096,
+  maxTokens: 100000,
 };
 
 const mockProjects: Project[] = [
