@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '@/lib/auth/AuthContext';
 
 export const metadata: Metadata = {
   title: 'OmniDev V3.0 - AI Chat Workspace',
@@ -35,7 +36,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body data-theme="dark" data-mode="standard">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

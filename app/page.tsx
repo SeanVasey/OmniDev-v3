@@ -11,6 +11,8 @@ import { MessageList } from '@/components/chat/MessageList';
 import { Toaster } from '@/components/ui/toaster';
 import { useChatStore } from '@/stores/chatStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { useDatabaseSync } from '@/hooks/useDatabaseSync';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
 
 const mockModel: AIModel = {
@@ -76,8 +78,10 @@ export default function HomePage() {
   const [currentModel] = useState(mockModel);
   const [activeContext, setActiveContext] = useState<ContextMode>(null);
 
+  const { user } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
-  const { currentChatId } = useChatStore();
+  const { currentChatId, chats, messages: storedMessages, setCurrentChat } = useChatStore();
+  const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
@@ -90,7 +94,11 @@ export default function HomePage() {
         description: error.message,
       });
     },
-    onFinish: () => {
+    onFinish: async (message) => {
+      // Save assistant's response to database
+      if (currentChatId && currentChatId !== 'temp' && message.content) {
+        await saveMessage(currentChatId, 'assistant', message.content, []);
+      }
       toast.success('Response complete');
     },
   });
@@ -122,6 +130,17 @@ export default function HomePage() {
 
     setActiveContext(context);
 
+    // Create a new chat if this is the first message
+    let chatId = currentChatId;
+    if (!chatId || chatId === 'temp') {
+      const title = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+      const newChat = await createNewChat(currentModel.id, title, context);
+      if (newChat) {
+        chatId = newChat.id;
+        setCurrentChat(chatId);
+      }
+    }
+
     // Add aspect ratio to message for image generation
     const finalMessage =
       context === 'image' && aspectRatio ? `${message} [Aspect Ratio: ${aspectRatio}]` : message;
@@ -131,6 +150,11 @@ export default function HomePage() {
       toast.info(`${attachments.length} file(s) attached`, {
         description: 'File upload coming soon',
       });
+    }
+
+    // Save user message to database
+    if (chatId && chatId !== 'temp') {
+      await saveMessage(chatId, 'user', finalMessage, []);
     }
 
     // Submit to AI
@@ -153,12 +177,14 @@ export default function HomePage() {
     window.location.reload();
   };
 
-  const handleSelectChat = (chatId: string) => {
-    console.log('Select chat:', chatId);
+  const handleSelectChat = async (chatId: string) => {
+    setCurrentChat(chatId);
     setSidebarOpen(false);
-    toast.info('Chat loading', {
-      description: 'Chat history coming soon',
-    });
+
+    // Load messages for this chat
+    await loadChatMessages(chatId);
+
+    toast.success('Chat loaded');
   };
 
   const handleSelectProject = (projectId: string) => {
@@ -181,8 +207,8 @@ export default function HomePage() {
         <MobileSidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)}>
           <SidebarContent
             projects={mockProjects}
-            recentChats={mockChats}
-            user={null}
+            recentChats={chats.length > 0 ? chats : mockChats}
+            user={user}
             onNewChat={handleNewChat}
             onSelectChat={handleSelectChat}
             onSelectProject={handleSelectProject}
