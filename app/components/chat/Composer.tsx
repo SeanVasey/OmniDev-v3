@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -15,6 +15,7 @@ import {
   AudioLines
 } from 'lucide-react';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useVoiceRecording } from '@/hooks/useVoiceRecording';
 import { HAPTIC_TRIGGERS } from '@/lib/haptics/triggers';
 import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea';
 import { cn } from '@/lib/utils';
@@ -47,7 +48,32 @@ export function Composer({
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [showUploadMenu, setShowUploadMenu] = useState(false);
 
+  const {
+    isRecording,
+    fullTranscript,
+    isSupported: isVoiceSupported,
+    startRecording,
+    stopRecording,
+    clearTranscript,
+  } = useVoiceRecording();
+
   useAutoResizeTextarea(textareaRef, message);
+
+  // Update message with voice transcript
+  useEffect(() => {
+    if (fullTranscript && isRecording) {
+      setMessage(fullTranscript);
+    }
+  }, [fullTranscript, isRecording]);
+
+  // Handle voice recording toggle
+  useEffect(() => {
+    if (isVoiceActive && !isRecording) {
+      startRecording();
+    } else if (!isVoiceActive && isRecording) {
+      stopRecording();
+    }
+  }, [isVoiceActive, isRecording, startRecording, stopRecording]);
 
   const handleSubmit = useCallback(() => {
     if (!message.trim() && attachments.length === 0) return;
@@ -62,8 +88,10 @@ export function Composer({
 
     setMessage('');
     setAttachments([]);
+    setIsVoiceActive(false);
+    clearTranscript();
     textareaRef.current?.focus();
-  }, [message, attachments, activeContext, aspectRatio, trigger, onSubmit]);
+  }, [message, attachments, activeContext, aspectRatio, trigger, onSubmit, clearTranscript]);
 
   const handleContextSelect = useCallback((context: ContextMode) => {
     if (activeContext === context) {
@@ -270,28 +298,32 @@ export function Composer({
               </button>
 
               {/* Voice Button */}
-              <button
-                onClick={() => {
-                  const newState = !isVoiceActive;
-                  trigger(newState
-                    ? HAPTIC_TRIGGERS.composer.voiceStart
-                    : HAPTIC_TRIGGERS.composer.voiceStop
-                  );
-                  setIsVoiceActive(newState);
-                }}
-                className={cn(
-                  "icon-button transition-all",
-                  isVoiceActive
-                    ? "bg-[var(--purple-600)] text-white scale-110"
-                    : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-                )}
-              >
-                {isVoiceActive ? (
-                  <AudioLines className="w-5 h-5 animate-pulse" />
-                ) : (
-                  <Mic className="w-5 h-5" />
-                )}
-              </button>
+              {isVoiceSupported && (
+                <button
+                  onClick={() => {
+                    const newState = !isVoiceActive;
+                    trigger(newState
+                      ? HAPTIC_TRIGGERS.composer.voiceStart
+                      : HAPTIC_TRIGGERS.composer.voiceStop
+                    );
+                    setIsVoiceActive(newState);
+                  }}
+                  disabled={disabled}
+                  className={cn(
+                    "icon-button transition-all",
+                    isVoiceActive
+                      ? "bg-[var(--purple-600)] text-white scale-110"
+                      : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]",
+                    disabled && "opacity-50 cursor-not-allowed"
+                  )}
+                >
+                  {isVoiceActive ? (
+                    <AudioLines className="w-5 h-5 animate-pulse" />
+                  ) : (
+                    <Mic className="w-5 h-5" />
+                  )}
+                </button>
+              )}
 
               {/* Send Button */}
               <AnimatePresence>
