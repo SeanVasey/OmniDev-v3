@@ -3,9 +3,11 @@ import { anthropic } from '@ai-sdk/anthropic';
 
 export const AI_PROVIDERS = {
   openai: {
-    o1: openai('o1'),
-    'o1-mini': openai('o1-mini'),
-    'o1-pro': openai('o1-pro'),
+    'gpt-5.1': openai('gpt-5.1'),
+    'gpt-5': openai('gpt-5'),
+    'gpt-5-mini': openai('gpt-5-mini'),
+    'gpt-5-nano': openai('gpt-5-nano'),
+    'gpt-5-pro': openai('gpt-5-pro'),
     'gpt-4o': openai('gpt-4o'),
   },
   anthropic: {
@@ -17,15 +19,16 @@ export const AI_PROVIDERS = {
 } as const;
 
 export function getAIModel(modelId: string) {
-  // OpenAI o1 models
-  if (modelId.startsWith('o1')) {
+  // OpenAI GPT-5 models
+  if (modelId.startsWith('gpt-5')) {
     return (
-      AI_PROVIDERS.openai[modelId as keyof typeof AI_PROVIDERS.openai] || AI_PROVIDERS.openai['o1']
+      AI_PROVIDERS.openai[modelId as keyof typeof AI_PROVIDERS.openai] ||
+      AI_PROVIDERS.openai['gpt-5.1']
     );
   }
 
-  // OpenAI GPT models
-  if (modelId.startsWith('gpt-') || modelId === 'gpt-4o') {
+  // OpenAI GPT-4 models
+  if (modelId.startsWith('gpt-4') || modelId === 'gpt-4o') {
     return (
       AI_PROVIDERS.openai[modelId as keyof typeof AI_PROVIDERS.openai] ||
       AI_PROVIDERS.openai['gpt-4o']
@@ -37,8 +40,8 @@ export function getAIModel(modelId: string) {
     return AI_PROVIDERS.anthropic['claude-3.5-sonnet'];
   }
 
-  // Default to o1
-  return AI_PROVIDERS.openai['o1'];
+  // Default to GPT-5.1
+  return AI_PROVIDERS.openai['gpt-5.1'];
 }
 
 export function getSystemPrompt(contextMode: string | null): string {

@@ -1,36 +1,56 @@
 import type { AIModel } from '@/types';
 
 export const AI_MODELS: Record<string, AIModel> = {
-  // OpenAI - o1 Series (Reasoning Models)
-  o1: {
-    id: 'o1',
-    name: 'o1',
+  // OpenAI - GPT-5 Series
+  'gpt-5.1': {
+    id: 'gpt-5.1',
+    name: 'GPT-5.1',
     provider: 'openai',
-    contextWindow: 200000,
+    contextWindow: 256000,
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
-    maxTokens: 100000,
+    maxTokens: 32768,
   },
-  'o1-mini': {
-    id: 'o1-mini',
-    name: 'o1-mini',
+  'gpt-5': {
+    id: 'gpt-5',
+    name: 'GPT-5',
+    provider: 'openai',
+    contextWindow: 256000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    maxTokens: 32768,
+  },
+  'gpt-5-mini': {
+    id: 'gpt-5-mini',
+    name: 'GPT-5 Mini',
     provider: 'openai',
     contextWindow: 128000,
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
-    maxTokens: 65536,
+    maxTokens: 16384,
   },
-  'o1-pro': {
-    id: 'o1-pro',
-    name: 'o1-pro',
+  'gpt-5-nano': {
+    id: 'gpt-5-nano',
+    name: 'GPT-5 Nano',
     provider: 'openai',
-    contextWindow: 200000,
+    contextWindow: 64000,
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
-    maxTokens: 100000,
+    maxTokens: 8192,
+  },
+  'gpt-5-pro': {
+    id: 'gpt-5-pro',
+    name: 'GPT-5 Pro',
+    provider: 'openai',
+    contextWindow: 512000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    maxTokens: 64000,
   },
   'gpt-4o': {
     id: 'gpt-4o',
