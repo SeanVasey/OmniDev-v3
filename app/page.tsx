@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useChat } from 'ai/react';
+import { toast } from 'sonner';
 import { Composer } from '@/components/chat/Composer';
 import { ModelSelector } from '@/components/header/ModelSelector';
 import { MobileSidebar } from '@/components/sidebar/MobileSidebar';
 import { SidebarContent } from '@/components/sidebar/SidebarContent';
-import type { ContextMode, AspectRatio, Project, Chat, AIModel } from '@/types';
+import { MessageList } from '@/components/chat/MessageList';
+import { Toaster } from '@/components/ui/toaster';
+import { useChatStore } from '@/stores/chatStore';
+import { useUIStore } from '@/stores/uiStore';
+import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
 
 const mockModel: AIModel = {
   id: 'gpt-4o',
@@ -67,82 +73,138 @@ const mockChats: Chat[] = [
 ];
 
 export default function HomePage() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isIncognito, setIsIncognito] = useState(false);
+  const [currentModel] = useState(mockModel);
+  const [activeContext, setActiveContext] = useState<ContextMode>(null);
 
-  const handleSubmit = (
+  const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
+  const { currentChatId } = useChatStore();
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
+    api: '/api/chat',
+    body: {
+      modelId: currentModel.id,
+      contextMode: activeContext,
+    },
+    onError: (error) => {
+      toast.error('Failed to send message', {
+        description: error.message,
+      });
+    },
+    onFinish: () => {
+      toast.success('Response complete');
+    },
+  });
+
+  // Convert ai/react messages to our Message type
+  const displayMessages: MessageType[] = messages.map((msg) => ({
+    id: msg.id,
+    chat_id: currentChatId || 'temp',
+    role: msg.role as 'user' | 'assistant' | 'system',
+    content: msg.content,
+    created_at: new Date().toISOString(),
+  }));
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Something went wrong', {
+        description: error.message,
+      });
+    }
+  }, [error]);
+
+  const handleComposerSubmit = async (
     message: string,
     attachments: File[],
     context: ContextMode,
     aspectRatio?: AspectRatio
   ) => {
-    console.log('Submit:', { message, attachments, context, aspectRatio });
-    // TODO: Implement AI integration
+    if (!message.trim() && attachments.length === 0) return;
+
+    setActiveContext(context);
+
+    // Add aspect ratio to message for image generation
+    const finalMessage =
+      context === 'image' && aspectRatio ? `${message} [Aspect Ratio: ${aspectRatio}]` : message;
+
+    // Handle file attachments
+    if (attachments.length > 0) {
+      toast.info(`${attachments.length} file(s) attached`, {
+        description: 'File upload coming soon',
+      });
+    }
+
+    // Submit to AI
+    const syntheticEvent = {
+      preventDefault: () => {},
+    } as React.FormEvent<HTMLFormElement>;
+
+    // Temporarily set input for submission
+    handleInputChange({
+      target: { value: finalMessage },
+    } as React.ChangeEvent<HTMLInputElement>);
+
+    setTimeout(() => {
+      handleSubmit(syntheticEvent);
+    }, 0);
   };
 
   const handleNewChat = () => {
-    console.log('New chat');
-    setIsSidebarOpen(false);
+    setSidebarOpen(false);
+    window.location.reload();
   };
 
   const handleSelectChat = (chatId: string) => {
     console.log('Select chat:', chatId);
-    setIsSidebarOpen(false);
+    setSidebarOpen(false);
+    toast.info('Chat loading', {
+      description: 'Chat history coming soon',
+    });
   };
 
   const handleSelectProject = (projectId: string) => {
     console.log('Select project:', projectId);
-    setIsSidebarOpen(false);
+    setSidebarOpen(false);
   };
 
   return (
-    <main className="relative min-h-screen bg-[var(--bg-primary)]">
-      {/* Header */}
-      <ModelSelector
-        currentModel={mockModel}
-        isIncognito={isIncognito}
-        onIncognitoToggle={() => setIsIncognito(!isIncognito)}
-        onMenuOpen={() => setIsSidebarOpen(true)}
-      />
-
-      {/* Mobile Sidebar */}
-      <MobileSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      >
-        <SidebarContent
-          projects={mockProjects}
-          recentChats={mockChats}
-          user={null}
-          onNewChat={handleNewChat}
-          onSelectChat={handleSelectChat}
-          onSelectProject={handleSelectProject}
+    <>
+      <main className="relative min-h-screen bg-[var(--bg-primary)] flex flex-col">
+        {/* Header */}
+        <ModelSelector
+          currentModel={currentModel}
+          isIncognito={isIncognitoMode}
+          onIncognitoToggle={toggleIncognitoMode}
+          onMenuOpen={() => setSidebarOpen(true)}
         />
-      </MobileSidebar>
 
-      {/* Main Content */}
-      <div className="
-        flex flex-col items-center justify-center
-        min-h-screen
-        px-4
-        pt-20 pb-40
-      ">
-        <div className="max-w-3xl w-full text-center space-y-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)]">
-            Welcome to OmniDev
-          </h1>
-          <p className="text-lg text-[var(--text-secondary)]">
-            Your AI-powered development workspace with support for multiple LLM providers
-          </p>
+        {/* Mobile Sidebar */}
+        <MobileSidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)}>
+          <SidebarContent
+            projects={mockProjects}
+            recentChats={mockChats}
+            user={null}
+            onNewChat={handleNewChat}
+            onSelectChat={handleSelectChat}
+            onSelectProject={handleSelectProject}
+          />
+        </MobileSidebar>
+
+        {/* Message List */}
+        <div className="flex-1 pt-20 pb-40">
+          <MessageList messages={displayMessages} isStreaming={isLoading} />
         </div>
-      </div>
 
-      {/* Composer */}
-      <Composer
-        onSubmit={handleSubmit}
-        isIncognito={isIncognito}
-        onIncognitoToggle={() => setIsIncognito(!isIncognito)}
-      />
-    </main>
+        {/* Composer */}
+        <Composer
+          onSubmit={handleComposerSubmit}
+          isIncognito={isIncognitoMode}
+          onIncognitoToggle={toggleIncognitoMode}
+          disabled={isLoading}
+        />
+      </main>
+
+      {/* Toast Notifications */}
+      <Toaster />
+    </>
   );
 }
