@@ -2,7 +2,7 @@
  * Tests for OmniDev class
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { OmniDev } from './omnidev.js';
 import type { OmniDevConfig } from './types.js';
 
@@ -17,6 +17,12 @@ describe('OmniDev', () => {
     temperature: 0.7,
     verbose: false,
   };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Mock fetch globally for tests that need it
+    global.fetch = vi.fn();
+  });
 
   it('should create an instance with config', () => {
     const omniDev = new OmniDev(mockConfig);
@@ -37,10 +43,32 @@ describe('OmniDev', () => {
   });
 
   it('should handle chat messages', async () => {
+    // Mock successful API response
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: 'Hello! How can I help you?',
+              role: 'assistant',
+            },
+          },
+        ],
+        usage: {
+          prompt_tokens: 10,
+          completion_tokens: 15,
+          total_tokens: 25,
+        },
+        model: 'gpt-3.5-turbo',
+      }),
+    });
+
     const omniDev = new OmniDev(mockConfig);
     const response = await omniDev.chat([{ role: 'user', content: 'Hello' }]);
     expect(response).toBeDefined();
     expect(typeof response).toBe('string');
+    expect(response).toBe('Hello! How can I help you?');
   });
 
   it('should preserve original config when getting config', () => {

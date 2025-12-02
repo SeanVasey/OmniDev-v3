@@ -4,4 +4,6 @@
  */
 
 export { OmniDev } from './omnidev.js';
-export type { OmniDevConfig, LLMProvider } from './types.js';
+export type { OmniDevConfig, LLMProvider, Message } from './types.js';
+export { Logger, LogLevel } from './logger.js';
+export { OmniDevError, ConfigurationError, LLMProviderError, ValidationError } from './errors.js';
