@@ -4,6 +4,10 @@ import { anthropic } from '@ai-sdk/anthropic';
 export const AI_PROVIDERS = {
   openai: {
     'gpt-5.1': openai('gpt-5.1'),
+    'gpt-5.1-chat': openai('gpt-5.1-chat'),
+    'gpt-5.1-codex': openai('gpt-5.1-codex'),
+    'gpt-5.1-codex-mini': openai('gpt-5.1-codex-mini'),
+    'gpt-5.1-mini': openai('gpt-5.1-mini'),
     'gpt-5': openai('gpt-5'),
     'gpt-5-mini': openai('gpt-5-mini'),
     'gpt-5-nano': openai('gpt-5-nano'),
