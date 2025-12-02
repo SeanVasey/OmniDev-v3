@@ -5,7 +5,17 @@
 import type { OmniDevConfig, Message } from './types.js';
 import { Logger, LogLevel } from './logger.js';
 import { ConfigurationError, ValidationError } from './errors.js';
-import { BaseLLMProvider, OpenAIProvider } from './providers/index.js';
+import {
+  BaseLLMProvider,
+  OpenAIProvider,
+  ClaudeProvider,
+  GeminiProvider,
+  GrokProvider,
+  MistralProvider,
+  PerplexityProvider,
+  MetaProvider,
+  LLaMAProvider,
+} from './providers/index.js';
 
 export class OmniDev {
   private config: OmniDevConfig;
@@ -49,6 +59,24 @@ export class OmniDev {
     switch (name.toLowerCase()) {
       case 'openai':
         return new OpenAIProvider(name, endpoint, apiKey);
+      case 'claude':
+      case 'anthropic':
+        return new ClaudeProvider(name, endpoint, apiKey);
+      case 'gemini':
+      case 'google':
+        return new GeminiProvider(name, endpoint, apiKey);
+      case 'grok':
+      case 'xai':
+        return new GrokProvider(name, endpoint, apiKey);
+      case 'mistral':
+        return new MistralProvider(name, endpoint, apiKey);
+      case 'perplexity':
+        return new PerplexityProvider(name, endpoint, apiKey);
+      case 'meta':
+        return new MetaProvider(name, endpoint, apiKey);
+      case 'llama':
+      case 'ollama':
+        return new LLaMAProvider(name, endpoint, apiKey);
       default:
         this.logger.warn(`Unknown provider '${name}', using OpenAI provider`);
         return new OpenAIProvider(name, endpoint, apiKey);
