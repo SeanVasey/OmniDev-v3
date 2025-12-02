@@ -12,7 +12,7 @@ import {
   updateChat as updateChatDb,
   isSupabaseConfigured,
 } from '@/lib/supabase/database';
-import type { Chat, Message } from '@/types';
+import type { Chat, Message, ContextMode } from '@/types';
 
 /**
  * Hook to sync chat store with Supabase database
@@ -92,7 +92,7 @@ export function useDatabaseSync() {
   const createNewChat = async (
     modelId: string,
     title: string = 'New Chat',
-    contextMode: string | null = null
+    contextMode: ContextMode = null
   ): Promise<Chat | null> => {
     if (!dbEnabled || isIncognitoMode) {
       // Return a local-only chat

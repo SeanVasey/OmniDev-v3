@@ -3,7 +3,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/database';
-import type { User } from '@supabase/supabase-js';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { User } from '@/types';
 
 interface AuthContextType {
   user: User | null;
@@ -13,6 +14,22 @@ interface AuthContextType {
   isLoading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+}
+
+// Convert Supabase user to our custom User type
+function toAppUser(supabaseUser: SupabaseUser | null): User | null {
+  if (!supabaseUser) return null;
+
+  return {
+    id: supabaseUser.id,
+    email: supabaseUser.email || '',
+    full_name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'User',
+    avatar_url: supabaseUser.user_metadata?.avatar_url || supabaseUser.user_metadata?.picture,
+    preferences: {
+      theme: 'dark',
+      haptics_enabled: true,
+    },
+  };
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Check active sessions
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      setUser(toAppUser(session?.user ?? null));
       setIsLoading(false);
     });
 
@@ -58,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      setUser(toAppUser(session?.user ?? null));
     });
 
     return () => subscription.unsubscribe();

@@ -36,6 +36,10 @@ export async function POST(req: NextRequest) {
       response_format: 'url',
     });
 
+    if (!response.data || response.data.length === 0) {
+      throw new Error('No image data returned from DALL·E 3');
+    }
+
     const imageUrl = response.data[0]?.url;
     const revisedPrompt = response.data[0]?.revised_prompt;
 

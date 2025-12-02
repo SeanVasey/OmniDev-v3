@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from './client';
-import type { Chat, Message } from '@/types';
+import type { Chat, Message, ContextMode, AspectRatio } from '@/types';
 import type { Database } from '@/types/database.types';
 
 type DbChat = Database['public']['Tables']['chats']['Row'];
@@ -251,14 +251,14 @@ function dbChatToChat(dbChat: DbChat): Chat {
   return {
     id: dbChat.id,
     user_id: dbChat.user_id,
-    workspace_id: dbChat.workspace_id,
+    workspace_id: dbChat.workspace_id ?? undefined,
     title: dbChat.title,
     model_id: dbChat.model_id,
-    context_mode: dbChat.context_mode,
+    context_mode: (dbChat.context_mode as ContextMode) ?? undefined,
     is_pinned: dbChat.is_pinned,
     is_archived: dbChat.is_archived,
     is_incognito: dbChat.is_incognito,
-    metadata: dbChat.metadata,
+    metadata: (dbChat.metadata as Record<string, any>) ?? undefined,
     created_at: dbChat.created_at,
     updated_at: dbChat.updated_at,
   };
@@ -271,7 +271,7 @@ function dbMessageToMessage(dbMessage: DbMessage): Message {
     role: dbMessage.role as 'user' | 'assistant' | 'system',
     content: dbMessage.content,
     attachments: dbMessage.attachments as any,
-    aspect_ratio: dbMessage.aspect_ratio,
+    aspect_ratio: (dbMessage.aspect_ratio as AspectRatio) ?? undefined,
     metrics: dbMessage.metrics as any,
     created_at: dbMessage.created_at,
   };
