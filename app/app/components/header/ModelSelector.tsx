@@ -6,6 +6,7 @@ import { useHaptics } from '@/hooks/useHaptics';
 import { HAPTIC_TRIGGERS } from '@/lib/haptics/triggers';
 import { cn } from '@/lib/utils';
 import { getAllModels } from '@/lib/ai/models';
+import { ProviderIcon } from '@/components/ui/ProviderIcon';
 import type { AIModel } from '@/types';
 
 interface ModelSelectorProps {
@@ -138,8 +139,11 @@ export function ModelSelector({
             ">
               {Object.entries(modelsByProvider).map(([provider, models]) => (
                 <div key={provider} className="p-2">
-                  <div className="px-3 py-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    {providerNames[provider] || provider}
+                  <div className="px-3 py-2 flex items-center gap-2">
+                    <ProviderIcon provider={provider} size={16} />
+                    <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                      {providerNames[provider] || provider}
+                    </span>
                   </div>
                   {models.map((model) => (
                     <button

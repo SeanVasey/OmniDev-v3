@@ -5,24 +5,29 @@ import { useHaptics } from '@/hooks/useHaptics';
 import { HAPTIC_TRIGGERS } from '@/lib/haptics/triggers';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ChatHistory } from '@/components/chat/ChatHistory';
 import type { Project, Chat, User } from '@/types';
 
 interface SidebarContentProps {
   projects: Project[];
-  recentChats: Chat[];
   user: User | null;
+  userId: string;
+  currentChatId: string | null;
   onNewChat: () => void;
   onSelectChat: (chatId: string) => void;
   onSelectProject: (projectId: string) => void;
+  onCreateProject: () => void;
 }
 
 export function SidebarContent({
   projects,
-  recentChats,
   user,
+  userId,
+  currentChatId,
   onNewChat,
   onSelectChat,
   onSelectProject,
+  onCreateProject,
 }: SidebarContentProps) {
   const { trigger } = useHaptics();
 
@@ -117,40 +122,13 @@ export function SidebarContent({
           </div>
 
           {/* Recent Chats Section */}
-          <div>
-            <h3 className="
-              px-3 py-2
-              text-xs font-semibold uppercase tracking-wider
-              text-[var(--text-muted)]
-            ">
-              Recent
-            </h3>
-            <div className="space-y-1">
-              {recentChats.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => {
-                    trigger(HAPTIC_TRIGGERS.button.secondary);
-                    onSelectChat(chat.id);
-                  }}
-                  className="
-                    w-full flex items-center gap-3
-                    px-3 py-2.5
-                    rounded-lg
-                    text-[var(--text-secondary)]
-                    hover:bg-[var(--bg-elevated)]
-                    hover:text-[var(--text-primary)]
-                    transition-colors
-                    touch-target
-                    text-left
-                  "
-                >
-                  <MessageSquare className="w-4 h-4 flex-shrink-0 opacity-50" />
-                  <span className="truncate text-sm">{chat.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Chat History */}
+          <ChatHistory
+            userId={userId}
+            currentChatId={currentChatId}
+            onSelectChat={onSelectChat}
+            onNewChat={onNewChat}
+          />
         </nav>
       </ScrollArea>
 

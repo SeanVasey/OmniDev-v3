@@ -251,11 +251,13 @@ export default function HomePage() {
         <MobileSidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)}>
           <SidebarContent
             projects={workspaces.length > 0 ? workspaces : (isGuest ? mockProjects : [])}
-            recentChats={chats.length > 0 ? chats : (isGuest ? mockChats : [])}
             user={user}
+            userId={userId}
+            currentChatId={currentChatId}
             onNewChat={handleNewChat}
             onSelectChat={handleSelectChat}
             onSelectProject={handleSelectProject}
+            onCreateProject={() => {}}
           />
         </MobileSidebar>
 
