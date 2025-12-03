@@ -24,7 +24,7 @@ interface ChatState {
 
 export const useChatStore = create<ChatState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       currentChatId: null,
       chats: [],
       messages: {},

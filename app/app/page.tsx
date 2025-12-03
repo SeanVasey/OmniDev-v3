@@ -77,7 +77,7 @@ export default function HomePage() {
 
   const { user, userId, isGuest } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
-  const { currentChatId, chats, messages: storedMessages, setCurrentChat, addMessage } = useChatStore();
+  const { currentChatId, chats, setCurrentChat, addMessage } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
   const { upload: uploadFiles, isUploading } = useFileUpload();
   const { generateImage, isGenerating } = useImageGeneration();
@@ -99,7 +99,7 @@ export default function HomePage() {
     });
   };
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
+  const { messages, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
     body: {
       modelId: currentModel.id,

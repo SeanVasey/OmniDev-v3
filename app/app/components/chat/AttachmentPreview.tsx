@@ -2,7 +2,6 @@
 
 import { X, FileText, Image as ImageIcon, Video, Music } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { formatFileSize } from '@/lib/utils';
 
 interface AttachmentPreviewProps {

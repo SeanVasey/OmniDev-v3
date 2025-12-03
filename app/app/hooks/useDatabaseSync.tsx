@@ -21,12 +21,10 @@ import type { Chat, Message, ContextMode } from '@/types';
  * - Syncs updates bidirectionally
  */
 export function useDatabaseSync() {
-  const { userId, isAuthenticated, isGuest, isLoading: authLoading } = useAuth();
+  const { userId, isLoading: authLoading } = useAuth();
   const { isIncognitoMode } = useUIStore();
   const {
     chats,
-    messages,
-    currentChatId,
     addChat,
     setMessages,
     updateChat: updateChatStore,
