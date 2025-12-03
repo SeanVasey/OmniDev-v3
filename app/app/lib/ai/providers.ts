@@ -2,6 +2,10 @@ import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
 import { mistral } from '@ai-sdk/mistral';
+import { xai } from '@ai-sdk/xai';
+import { perplexity } from '@ai-sdk/perplexity';
+import { togetherai } from '@ai-sdk/togetherai';
+import { ollama } from 'ollama-ai-provider';
 
 export const AI_PROVIDERS = {
   openai: {
@@ -29,6 +33,18 @@ export const AI_PROVIDERS = {
   },
   mistral: {
     'mistral-large': mistral('mistral-large-latest'),
+  },
+  xai: {
+    'grok-beta': xai('grok-beta'),
+  },
+  perplexity: {
+    'sonar-large': perplexity('llama-3.1-sonar-large-128k-online'),
+  },
+  meta: {
+    'llama-3.1-70b': togetherai('meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo'),
+  },
+  local: {
+    'llama-3.1-local': ollama('llama3.1'),
   },
 } as const;
 
@@ -65,6 +81,26 @@ export function getAIModel(modelId: string) {
   // Mistral models
   if (modelId.includes('mistral')) {
     return AI_PROVIDERS.mistral['mistral-large'];
+  }
+
+  // xAI models
+  if (modelId.includes('grok')) {
+    return AI_PROVIDERS.xai['grok-beta'];
+  }
+
+  // Perplexity models
+  if (modelId.includes('sonar') || modelId.includes('perplexity')) {
+    return AI_PROVIDERS.perplexity['sonar-large'];
+  }
+
+  // Meta/Together AI models
+  if (modelId.includes('llama') && modelId.includes('70b')) {
+    return AI_PROVIDERS.meta['llama-3.1-70b'];
+  }
+
+  // Local Ollama models
+  if (modelId.includes('local') || modelId.includes('ollama')) {
+    return AI_PROVIDERS.local['llama-3.1-local'];
   }
 
   // Default to GPT-5.1
