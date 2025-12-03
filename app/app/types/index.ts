@@ -76,5 +76,7 @@ export interface AIModel {
   supportsStreaming: boolean;
   supportsVision: boolean;
   supportsImageGen: boolean;
+  supportsThinking?: boolean;
+  supportsResearch?: boolean;
   maxTokens: number;
 }

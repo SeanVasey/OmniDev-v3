@@ -1,5 +1,7 @@
 import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
+import { mistral } from '@ai-sdk/mistral';
 
 export const AI_PROVIDERS = {
   openai: {
@@ -19,6 +21,12 @@ export const AI_PROVIDERS = {
     'claude-3-opus': anthropic('claude-3-opus-20240229'),
     'claude-3-sonnet': anthropic('claude-3-sonnet-20240229'),
     'claude-3-haiku': anthropic('claude-3-haiku-20240307'),
+  },
+  google: {
+    'gemini-1.5-pro': google('gemini-1.5-pro'),
+  },
+  mistral: {
+    'mistral-large': mistral('mistral-large-latest'),
   },
 } as const;
 
@@ -41,7 +49,20 @@ export function getAIModel(modelId: string) {
 
   // Anthropic models
   if (modelId.includes('claude')) {
-    return AI_PROVIDERS.anthropic['claude-3.5-sonnet'];
+    return (
+      AI_PROVIDERS.anthropic[modelId as keyof typeof AI_PROVIDERS.anthropic] ||
+      AI_PROVIDERS.anthropic['claude-3.5-sonnet']
+    );
+  }
+
+  // Google models
+  if (modelId.includes('gemini')) {
+    return AI_PROVIDERS.google['gemini-1.5-pro'];
+  }
+
+  // Mistral models
+  if (modelId.includes('mistral')) {
+    return AI_PROVIDERS.mistral['mistral-large'];
   }
 
   // Default to GPT-5.1

@@ -157,6 +157,8 @@ export function ModelSelector({
                           {(model.contextWindow / 1000).toFixed(0)}K context
                           {model.supportsVision && ' • Vision'}
                           {model.supportsImageGen && ' • Image Gen'}
+                          {model.supportsThinking && ' • Thinking'}
+                          {model.supportsResearch && ' • Research'}
                         </div>
                       )}
                     </button>

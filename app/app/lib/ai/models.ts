@@ -10,6 +10,8 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
     maxTokens: 32768,
   },
   'gpt-5.1-chat': {
@@ -20,6 +22,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
     maxTokens: 32768,
   },
   'gpt-5.1-codex': {
@@ -30,6 +33,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
     maxTokens: 32768,
   },
   'gpt-5.1-codex-mini': {
@@ -40,6 +44,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
     maxTokens: 16384,
   },
   'gpt-5.1-mini': {
@@ -50,6 +55,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
     maxTokens: 16384,
   },
   'gpt-5': {
@@ -60,6 +66,8 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
     maxTokens: 32768,
   },
   'gpt-5-mini': {
@@ -122,6 +130,8 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
     maxTokens: 8192,
   },
   'claude-3-opus': {
@@ -132,6 +142,8 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
     maxTokens: 4096,
   },
 
@@ -144,6 +156,8 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
     maxTokens: 8192,
   },
 
@@ -180,6 +194,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsStreaming: true,
     supportsVision: false,
     supportsImageGen: false,
+    supportsResearch: true,
     maxTokens: 4096,
   },
 

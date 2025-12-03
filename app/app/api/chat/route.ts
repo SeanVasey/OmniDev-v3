@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     const systemPrompt = getSystemPrompt(contextMode);
 
     const result = await streamText({
-      model,
+      model: model as any,
       system: systemPrompt,
       messages,
       maxTokens: 4096,
