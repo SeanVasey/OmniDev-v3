@@ -1,4 +1,4 @@
-export type ContextMode = 'thinking' | 'search' | 'research' | 'image' | null;
+export type ContextMode = 'thinking' | 'search' | 'research' | 'image' | 'video' | null;
 export type AspectRatio = '1:1' | '3:4' | '4:3' | '16:9' | '9:16';
 
 export interface User {
@@ -76,5 +76,8 @@ export interface AIModel {
   supportsStreaming: boolean;
   supportsVision: boolean;
   supportsImageGen: boolean;
+  supportsVideoGen?: boolean;
+  supportsThinking?: boolean;
+  supportsResearch?: boolean;
   maxTokens: number;
 }

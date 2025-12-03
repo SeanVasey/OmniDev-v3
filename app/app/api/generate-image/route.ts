@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { isProviderConfigured } from '@/lib/env';
 
 export const runtime = 'edge';
 export const maxDuration = 60;
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +12,21 @@ export async function POST(req: NextRequest) {
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
+
+    // Check if OpenAI API key is configured
+    if (!isProviderConfigured('openai')) {
+      return NextResponse.json(
+        {
+          error:
+            'OpenAI API key not configured. Please set OPENAI_API_KEY in your .env.local file.',
+        },
+        { status: 503 }
+      );
+    }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    });
 
     // Map aspect ratio to DALL·E 3 size
     const sizeMap: Record<string, '1024x1024' | '1792x1024' | '1024x1792'> = {
@@ -61,18 +73,41 @@ export async function POST(req: NextRequest) {
     // Handle specific OpenAI errors
     if (error?.error?.code === 'content_policy_violation') {
       return NextResponse.json(
-        { error: 'Your request was rejected due to content policy violations.' },
+        {
+          error:
+            'Your request was rejected due to content policy violations. Please modify your prompt.',
+        },
         { status: 400 }
       );
     }
 
-    if (error?.status === 401) {
-      return NextResponse.json({ error: 'OpenAI API key is invalid or missing.' }, { status: 401 });
+    if (error?.status === 401 || error?.error?.code === 'invalid_api_key') {
+      return NextResponse.json(
+        { error: 'OpenAI API key is invalid. Please check your configuration.' },
+        { status: 401 }
+      );
+    }
+
+    if (error?.status === 429 || error?.error?.code === 'rate_limit_exceeded') {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    if (error?.status === 503 || error?.error?.code === 'model_overloaded') {
+      return NextResponse.json(
+        { error: 'DALL·E 3 is currently overloaded. Please try again in a moment.' },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json(
-      { error: error.message || 'Failed to generate image' },
-      { status: 500 }
+      {
+        error:
+          error?.message || error?.error?.message || 'Failed to generate image. Please try again.',
+      },
+      { status: error?.status || 500 }
     );
   }
 }
