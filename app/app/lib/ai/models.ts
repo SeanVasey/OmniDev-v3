@@ -1,9 +1,9 @@
 import type { AIModel } from '@/types';
 
 export const AI_MODELS: Record<string, AIModel> = {
-  // OpenAI - GPT-5 Series
+  // OpenAI - GPT-5.1 Series (November 2025)
   'gpt-5.1': {
-    id: 'gpt-5.1',
+    id: 'gpt-5.1-2025-11-13',
     name: 'GPT-5.1',
     provider: 'openai',
     contextWindow: 256000,
@@ -15,7 +15,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     maxTokens: 32768,
   },
   'gpt-5.1-chat': {
-    id: 'gpt-5.1-chat',
+    id: 'gpt-5.1-chat-2025-11-13',
     name: 'GPT-5.1 Chat',
     provider: 'openai',
     contextWindow: 256000,
@@ -26,7 +26,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     maxTokens: 32768,
   },
   'gpt-5.1-codex': {
-    id: 'gpt-5.1-codex',
+    id: 'gpt-5.1-codex-2025-11-13',
     name: 'GPT-5.1 Codex',
     provider: 'openai',
     contextWindow: 256000,
@@ -37,7 +37,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     maxTokens: 32768,
   },
   'gpt-5.1-codex-mini': {
-    id: 'gpt-5.1-codex-mini',
+    id: 'gpt-5.1-codex-mini-2025-11-13',
     name: 'GPT-5.1 Codex Mini',
     provider: 'openai',
     contextWindow: 128000,
@@ -47,19 +47,21 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsThinking: true,
     maxTokens: 16384,
   },
-  'gpt-5.1-mini': {
-    id: 'gpt-5.1-mini',
-    name: 'GPT-5.1 Mini',
+  'gpt-5.1-codex-max': {
+    id: 'gpt-5.1-codex-max-2025-11-19',
+    name: 'GPT-5.1 Codex Max',
     provider: 'openai',
-    contextWindow: 128000,
+    contextWindow: 512000,
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
     supportsThinking: true,
-    maxTokens: 16384,
+    maxTokens: 64000,
   },
+
+  // OpenAI - GPT-5 Series (August-October 2025)
   'gpt-5': {
-    id: 'gpt-5',
+    id: 'gpt-5-2025-08-07',
     name: 'GPT-5',
     provider: 'openai',
     contextWindow: 256000,
@@ -71,7 +73,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     maxTokens: 32768,
   },
   'gpt-5-mini': {
-    id: 'gpt-5-mini',
+    id: 'gpt-5-mini-2025-08-07',
     name: 'GPT-5 Mini',
     provider: 'openai',
     contextWindow: 128000,
@@ -81,7 +83,7 @@ export const AI_MODELS: Record<string, AIModel> = {
     maxTokens: 16384,
   },
   'gpt-5-nano': {
-    id: 'gpt-5-nano',
+    id: 'gpt-5-nano-2025-08-07',
     name: 'GPT-5 Nano',
     provider: 'openai',
     contextWindow: 64000,
@@ -90,14 +92,38 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsImageGen: false,
     maxTokens: 8192,
   },
+  'gpt-5-chat': {
+    id: 'gpt-5-chat-2025-10-03',
+    name: 'GPT-5 Chat',
+    provider: 'openai',
+    contextWindow: 256000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    supportsThinking: true,
+    maxTokens: 32768,
+  },
+  'gpt-5-codex': {
+    id: 'gpt-5-codex-2025-09-11',
+    name: 'GPT-5 Codex',
+    provider: 'openai',
+    contextWindow: 256000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    supportsThinking: true,
+    maxTokens: 32768,
+  },
   'gpt-5-pro': {
-    id: 'gpt-5-pro',
+    id: 'gpt-5-pro-2025-10-06',
     name: 'GPT-5 Pro',
     provider: 'openai',
     contextWindow: 512000,
     supportsStreaming: true,
     supportsVision: true,
     supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
     maxTokens: 64000,
   },
   'gpt-4o': {

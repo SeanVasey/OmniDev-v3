@@ -5,15 +5,17 @@ import { mistral } from '@ai-sdk/mistral';
 
 export const AI_PROVIDERS = {
   openai: {
-    'gpt-5.1': openai('gpt-5.1'),
-    'gpt-5.1-chat': openai('gpt-5.1-chat'),
-    'gpt-5.1-codex': openai('gpt-5.1-codex'),
-    'gpt-5.1-codex-mini': openai('gpt-5.1-codex-mini'),
-    'gpt-5.1-mini': openai('gpt-5.1-mini'),
-    'gpt-5': openai('gpt-5'),
-    'gpt-5-mini': openai('gpt-5-mini'),
-    'gpt-5-nano': openai('gpt-5-nano'),
-    'gpt-5-pro': openai('gpt-5-pro'),
+    'gpt-5.1': openai('gpt-5.1-2025-11-13'),
+    'gpt-5.1-chat': openai('gpt-5.1-chat-2025-11-13'),
+    'gpt-5.1-codex': openai('gpt-5.1-codex-2025-11-13'),
+    'gpt-5.1-codex-mini': openai('gpt-5.1-codex-mini-2025-11-13'),
+    'gpt-5.1-codex-max': openai('gpt-5.1-codex-max-2025-11-19'),
+    'gpt-5': openai('gpt-5-2025-08-07'),
+    'gpt-5-mini': openai('gpt-5-mini-2025-08-07'),
+    'gpt-5-nano': openai('gpt-5-nano-2025-08-07'),
+    'gpt-5-chat': openai('gpt-5-chat-2025-10-03'),
+    'gpt-5-codex': openai('gpt-5-codex-2025-09-11'),
+    'gpt-5-pro': openai('gpt-5-pro-2025-10-06'),
     'gpt-4o': openai('gpt-4o'),
   },
   anthropic: {
