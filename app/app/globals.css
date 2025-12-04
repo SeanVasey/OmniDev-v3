@@ -430,3 +430,203 @@ body {
     touch-action: manipulation;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ENHANCED ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--purple-glow);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--purple-glow), 0 0 60px var(--purple-glow-subtle);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer components {
+  /* Gradient text effect */
+  .gradient-text {
+    @apply bg-gradient-to-r from-[var(--purple-400)] via-[var(--purple-500)] to-[var(--purple-600)] bg-clip-text text-transparent;
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Glassmorphism card */
+  .glass-card {
+    @apply backdrop-blur-xl border rounded-2xl;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .glass-card-elevated {
+    @apply backdrop-blur-2xl border rounded-3xl shadow-2xl;
+    background: var(--glass-bg-elevated);
+    border-color: var(--glass-border);
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--bg-elevated) 25%,
+      var(--bg-muted) 50%,
+      var(--bg-elevated) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* Glow effect */
+  .glow {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  /* Float animation */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Modern button styles */
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-200;
+    @apply bg-gradient-to-r from-[var(--purple-600)] to-[var(--purple-500)];
+    @apply text-white shadow-lg;
+    box-shadow: 0 8px 32px var(--purple-glow);
+  }
+
+  .btn-primary:hover {
+    @apply from-[var(--purple-500)] to-[var(--purple-400)];
+    @apply scale-[1.02];
+    box-shadow: 0 12px 40px var(--purple-glow);
+  }
+
+  .btn-primary:active {
+    @apply scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-200;
+    @apply bg-[var(--bg-elevated)] border border-[var(--border-default)];
+    @apply text-[var(--text-secondary)] hover:text-[var(--text-primary)];
+    @apply hover:bg-[var(--bg-muted)] hover:border-[var(--border-strong)];
+  }
+
+  /* Input styles */
+  .input-modern {
+    @apply w-full px-4 py-3 rounded-xl transition-all duration-200;
+    @apply bg-[var(--bg-elevated)] border border-[var(--border-default)];
+    @apply text-[var(--text-primary)] placeholder:text-[var(--text-placeholder)];
+    @apply focus:outline-none focus:ring-2 focus:ring-[var(--purple-500)]/50 focus:border-[var(--purple-500)];
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-[var(--bg-elevated)] rounded-lg animate-pulse;
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-[var(--purple-500)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)];
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-[var(--purple-900)]/50 text-[var(--purple-400)] border border-[var(--purple-700)]/30;
+  }
+
+  .badge-success {
+    @apply bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/20;
+  }
+
+  .badge-warning {
+    @apply bg-[var(--color-warning)]/10 text-[var(--color-warning)] border border-[var(--color-warning)]/20;
+  }
+
+  .badge-error {
+    @apply bg-[var(--color-error)]/10 text-[var(--color-error)] border border-[var(--color-error)]/20;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM SCROLLBAR (for desktop)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (pointer: fine) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-muted);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--grey-700);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--grey-600);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SELECTION STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+::selection {
+  background: var(--purple-600);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--purple-600);
+  color: white;
+}

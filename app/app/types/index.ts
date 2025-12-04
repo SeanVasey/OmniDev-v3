@@ -1,16 +1,33 @@
 export type ContextMode = 'thinking' | 'search' | 'research' | 'image' | 'video' | null;
 export type AspectRatio = '1:1' | '3:4' | '4:3' | '16:9' | '9:16';
 
+export interface BillingAddress {
+  street: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+}
+
 export interface User {
   id: string;
   email: string;
   full_name: string;
   avatar_url?: string;
+  occupation?: string;
+  mobile_number?: string;
+  billing_address?: BillingAddress;
+  subscription_tier?: 'free' | 'pro' | 'enterprise';
+  subscription_status?: 'active' | 'inactive' | 'trial';
+  google_id?: string;
   preferences?: {
     theme?: 'dark' | 'light';
     haptics_enabled?: boolean;
     default_model?: string;
+    notifications_enabled?: boolean;
   };
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Project {

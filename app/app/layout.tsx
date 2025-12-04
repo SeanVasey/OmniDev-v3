@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth/AuthContext';
 
@@ -6,19 +6,20 @@ export const metadata: Metadata = {
   title: 'OmniDev V3.0 - AI Chat Workspace',
   description: 'A modern, mobile-first multimodal AI chat workspace with support for multiple LLM providers',
   manifest: '/manifest.json',
-  themeColor: '#2B3E47',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'OmniDev',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
-  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#2B3E47',
 };
 
 export default function RootLayout({
