@@ -65,6 +65,7 @@ export async function uploadFile(
     // Save attachment metadata to database
     const { data: attachmentData, error: attachmentError } = await supabase
       .from('attachments')
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       .insert({
         user_id: userId,
         message_id: messageId || null,
@@ -85,12 +86,19 @@ export async function uploadFile(
     }
 
     return {
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       id: attachmentData.id,
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       storage_path: attachmentData.storage_path,
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       file_name: attachmentData.file_name,
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       file_type: attachmentData.file_type,
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       file_size: attachmentData.file_size,
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       public_url: attachmentData.public_url,
+      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       created_at: attachmentData.created_at,
     };
   } catch (error) {

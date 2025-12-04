@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { toast } from 'sonner';
 import { Composer } from '@/components/chat/Composer';
 import { ModelSelector } from '@/components/header/ModelSelector';
@@ -99,34 +100,49 @@ export default function HomePage() {
     });
   };
 
-  const { messages, handleInputChange, handleSubmit, isLoading, error } = useChat({
-    api: '/api/chat',
-    body: {
-      modelId: currentModel.id,
-      contextMode: activeContext,
-    },
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+    }),
     onError: (error) => {
       toast.error('Failed to send message', {
         description: error.message,
       });
     },
-    onFinish: async (message) => {
+    onFinish: async ({ message }) => {
       // Save assistant's response to database
-      if (currentChatId && currentChatId !== 'temp' && message.content) {
-        await saveMessage(currentChatId, 'assistant', message.content, []);
+      // In AI SDK v5, message content is in parts array
+      const textContent = message.parts
+        ?.filter((part: any) => part.type === 'text')
+        .map((part: any) => part.text)
+        .join('');
+
+      if (currentChatId && currentChatId !== 'temp' && textContent) {
+        await saveMessage(currentChatId, 'assistant', textContent, []);
       }
       toast.success('Response complete');
     },
   });
 
-  // Convert ai/react messages to our Message type
-  const displayMessages: MessageType[] = messages.map((msg) => ({
-    id: msg.id,
-    chat_id: currentChatId || 'temp',
-    role: msg.role as 'user' | 'assistant' | 'system',
-    content: msg.content,
-    created_at: new Date().toISOString(),
-  }));
+  // Derive isLoading from status for compatibility
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  // Convert AI SDK v5 UIMessage to our Message type
+  const displayMessages: MessageType[] = messages.map((msg) => {
+    // Extract text from parts array
+    const textContent = msg.parts
+      ?.filter((part: any) => part.type === 'text')
+      .map((part: any) => part.text)
+      .join('') || '';
+
+    return {
+      id: msg.id,
+      chat_id: currentChatId || 'temp',
+      role: msg.role as 'user' | 'assistant' | 'system',
+      content: textContent,
+      created_at: new Date().toISOString(),
+    };
+  });
 
   useEffect(() => {
     if (error) {
@@ -200,19 +216,16 @@ export default function HomePage() {
       return; // Don't submit to chat API for image generation
     }
 
-    // Submit to AI for regular chat
-    const syntheticEvent = {
-      preventDefault: () => {},
-    } as React.FormEvent<HTMLFormElement>;
-
-    // Temporarily set input for submission
-    handleInputChange({
-      target: { value: finalMessage },
-    } as React.ChangeEvent<HTMLInputElement>);
-
-    setTimeout(() => {
-      handleSubmit(syntheticEvent);
-    }, 0);
+    // Submit to AI for regular chat using sendMessage with model and context info
+    sendMessage(
+      { text: finalMessage },
+      {
+        body: {
+          modelId: currentModel.id,
+          contextMode: activeContext,
+        },
+      }
+    );
   };
 
   const handleNewChat = () => {

@@ -42,11 +42,11 @@ export async function POST(req: Request) {
       model: model as any,
       system: systemPrompt,
       messages,
-      maxTokens: 4096,
+      maxOutputTokens: 4096,
       temperature: 0.7,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('Chat API error:', error);
 
