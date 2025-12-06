@@ -26,7 +26,7 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'var(--font-primary)'],
+        sans: ['Reddit Sans', 'var(--font-primary)'],
       },
       colors: {
         background: 'var(--bg-primary)',
