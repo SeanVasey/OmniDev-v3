@@ -23,6 +23,8 @@ interface AuthContextType {
   isGuest: boolean;
   isLoading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
+  signInWithMicrosoft: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
   signUpWithEmail: (data: SignUpData) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -115,7 +117,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (error) {
-      console.error('Error signing in:', error);
+      console.error('Error signing in with Google:', error);
+    }
+  };
+
+  const signInWithApple = async () => {
+    if (!isSupabaseConfigured()) {
+      console.warn('Supabase not configured. Cannot sign in.');
+      return;
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      console.error('Error signing in with Apple:', error);
+    }
+  };
+
+  const signInWithMicrosoft = async () => {
+    if (!isSupabaseConfigured()) {
+      console.warn('Supabase not configured. Cannot sign in.');
+      return;
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        scopes: 'openid profile email',
+      },
+    });
+
+    if (error) {
+      console.error('Error signing in with Microsoft:', error);
     }
   };
 
@@ -248,6 +289,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isGuest: !user,
     isLoading,
     signInWithGoogle,
+    signInWithApple,
+    signInWithMicrosoft,
     signInWithEmail,
     signUpWithEmail,
     signOut,

@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import { Composer } from '@/components/chat/Composer';
 import { ModelSelector } from '@/components/header/ModelSelector';
 import { MobileSidebar } from '@/components/sidebar/MobileSidebar';
 import { SidebarContent } from '@/components/sidebar/SidebarContent';
 import { MessageList } from '@/components/chat/MessageList';
 import { Toaster } from '@/components/ui/toaster';
+import { LandingPage } from '@/components/landing/LandingPage';
 import { useChatStore } from '@/stores/chatStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -76,7 +78,8 @@ export default function HomePage() {
   const [activeContext, setActiveContext] = useState<ContextMode>(null);
   const [workspaces, setWorkspaces] = useState<Project[]>([]);
 
-  const { user, userId, isGuest } = useAuth();
+  // All hooks must be called before any conditional returns
+  const { user, userId, isGuest, isAuthenticated, isLoading: authLoading } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
   const { currentChatId, chats, setCurrentChat, addMessage } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
@@ -151,6 +154,23 @@ export default function HomePage() {
       });
     }
   }, [error]);
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[var(--accent-primary)] animate-spin" />
+          <p className="text-[var(--text-secondary)]">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show landing page if not authenticated
+  if (!isAuthenticated) {
+    return <LandingPage />;
+  }
 
   const handleComposerSubmit = async (
     message: string,
