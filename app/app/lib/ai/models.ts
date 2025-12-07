@@ -126,16 +126,6 @@ export const AI_MODELS: Record<string, AIModel> = {
     supportsResearch: true,
     maxTokens: 64000,
   },
-  'gpt-4o': {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
-    provider: 'openai',
-    contextWindow: 128000,
-    supportsStreaming: true,
-    supportsVision: true,
-    supportsImageGen: false,
-    maxTokens: 16384,
-  },
   'dall-e-3': {
     id: 'dall-e-3',
     name: 'DALL·E 3',
