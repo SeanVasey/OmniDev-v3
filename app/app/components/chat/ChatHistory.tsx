@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Clock, Pin, Archive, Trash2, MoreVertical } from 'lucide-react';
+import { MessageSquare, Clock, Pin, Archive, Trash2, MoreVertical, Star } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 import { getUserChats, updateChat, deleteChat } from '@/lib/supabase/database';
@@ -46,6 +46,18 @@ export function ChatHistory({ userId, currentChatId, onSelectChat, onNewChat }: 
       await updateChat(chat.id, { is_pinned: !chat.is_pinned });
       await loadChats();
       toast.success(chat.is_pinned ? 'Unpinned chat' : 'Pinned chat');
+    } catch (error) {
+      toast.error('Failed to update chat');
+    }
+    setActiveMenu(null);
+  };
+
+  const handleStar = async (chat: Chat, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await updateChat(chat.id, { is_starred: !chat.is_starred });
+      await loadChats();
+      toast.success(chat.is_starred ? 'Removed from favorites' : 'Added to favorites');
     } catch (error) {
       toast.error('Failed to update chat');
     }
@@ -117,6 +129,7 @@ export function ChatHistory({ userId, currentChatId, onSelectChat, onNewChat }: 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium truncate">{chat.title}</span>
+              {chat.is_starred && <Star className="w-3 h-3 flex-shrink-0 fill-yellow-500 text-yellow-500" />}
               {chat.is_pinned && <Pin className="w-3 h-3 flex-shrink-0" />}
             </div>
             <div className="flex items-center gap-2 mt-0.5 text-xs text-[var(--text-muted)]">
@@ -139,6 +152,13 @@ export function ChatHistory({ userId, currentChatId, onSelectChat, onNewChat }: 
 
             {activeMenu === chat.id && (
               <div className="absolute right-0 top-8 w-40 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-10">
+                <button
+                  onClick={(e) => handleStar(chat, e)}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--bg-muted)] flex items-center gap-2"
+                >
+                  <Star className={cn("w-4 h-4", chat.is_starred && "fill-yellow-500 text-yellow-500")} />
+                  {chat.is_starred ? 'Unstar' : 'Star'}
+                </button>
                 <button
                   onClick={(e) => handlePin(chat, e)}
                   className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--bg-muted)] flex items-center gap-2"

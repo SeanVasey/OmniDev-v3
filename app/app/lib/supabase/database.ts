@@ -99,16 +99,20 @@ export async function updateChat(chatId: string, updates: Partial<Chat>): Promis
   try {
     const supabase = createClient();
 
+    const updateData: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (updates.title !== undefined) updateData.title = updates.title;
+    if (updates.is_pinned !== undefined) updateData.is_pinned = updates.is_pinned;
+    if (updates.is_archived !== undefined) updateData.is_archived = updates.is_archived;
+    if (updates.is_starred !== undefined) updateData.is_starred = updates.is_starred;
+    if (updates.context_mode !== undefined) updateData.context_mode = updates.context_mode;
+
     const { data, error } = await supabase
       .from('chats')
       // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      .update({
-        title: updates.title,
-        is_pinned: updates.is_pinned,
-        is_archived: updates.is_archived,
-        context_mode: updates.context_mode,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', chatId)
       .select()
       .single();
@@ -441,6 +445,7 @@ function dbChatToChat(dbChat: DbChat): Chat {
     is_pinned: dbChat.is_pinned,
     is_archived: dbChat.is_archived,
     is_incognito: dbChat.is_incognito,
+    is_starred: (dbChat as any).is_starred ?? false,
     metadata: (dbChat.metadata as Record<string, any>) ?? undefined,
     created_at: dbChat.created_at,
     updated_at: dbChat.updated_at,
@@ -458,6 +463,60 @@ function dbMessageToMessage(dbMessage: DbMessage): Message {
     metrics: dbMessage.metrics as any,
     created_at: dbMessage.created_at,
   };
+}
+
+// ============================================================================
+// Media Generation Operations
+// ============================================================================
+
+export async function getRecentMediaGenerations(
+  userId: string,
+  limit: number = 4
+): Promise<any[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  try {
+    const supabase = createClient();
+
+    // Query messages that contain generated images/videos
+    const { data, error } = await supabase
+      .from('messages')
+      .select(`
+        id,
+        content,
+        created_at,
+        chat_id,
+        chats!inner(user_id)
+      `)
+      .eq('role', 'assistant')
+      .eq('chats.user_id', userId)
+      .or('content.ilike.%![Generated Image]%,content.ilike.%![Generated Video]%')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching media generations:', error);
+      return [];
+    }
+
+    // Parse images/videos from message content
+    return (data || []).map((msg: any) => {
+      const imageMatch = msg.content.match(/!\[Generated Image\]\((.*?)\)/);
+      const videoMatch = msg.content.match(/!\[Generated Video\]\((.*?)\)/);
+      return {
+        id: msg.id,
+        type: videoMatch ? 'video' : 'image',
+        url: imageMatch?.[1] || videoMatch?.[1] || '',
+        created_at: msg.created_at,
+        chat_id: msg.chat_id,
+      };
+    }).filter((item: any) => item.url);
+  } catch (error) {
+    console.error('Exception fetching media generations:', error);
+    return [];
+  }
 }
 
 // ============================================================================

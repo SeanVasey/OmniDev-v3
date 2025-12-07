@@ -103,6 +103,7 @@ export function useDatabaseSync() {
         is_pinned: false,
         is_archived: false,
         is_incognito: isIncognitoMode,
+        is_starred: false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };

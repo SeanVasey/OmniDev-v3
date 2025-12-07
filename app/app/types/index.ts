@@ -52,6 +52,7 @@ export interface Chat {
   is_pinned: boolean;
   is_archived: boolean;
   is_incognito: boolean;
+  is_starred: boolean;
   metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
@@ -98,3 +99,29 @@ export interface AIModel {
   supportsResearch?: boolean;
   maxTokens: number;
 }
+
+export interface MediaGeneration {
+  id: string;
+  user_id: string;
+  type: 'image' | 'video';
+  prompt: string;
+  url: string;
+  thumbnail_url?: string;
+  model_id: string;
+  aspect_ratio?: AspectRatio;
+  metadata?: Record<string, any>;
+  created_at: string;
+}
+
+export interface ProjectSettings {
+  id: string;
+  workspace_id: string;
+  system_instruction?: string;
+  default_model_id?: string;
+  characteristics?: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export type ProjectIcon = 'folder' | 'code' | 'design' | 'data' | 'research' | 'writing' | 'image' | 'video' | 'music' | 'chat';
+export type ProjectColor = 'orange' | 'blue' | 'green' | 'purple' | 'pink' | 'red' | 'yellow' | 'teal';
