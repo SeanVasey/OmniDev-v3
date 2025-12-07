@@ -71,10 +71,12 @@ const contextModes = [
 function categorizeModel(model: AIModel): ModelCategory {
   if (model.supportsImageGen) return 'image';
   if (model.supportsVideoGen) return 'video';
+  // All Codex models go to Code
   if (model.name.toLowerCase().includes('codex')) return 'code';
-  // Perplexity Sonar is specifically for research
+  // GPT Pro models and Perplexity Sonar go to Research
+  if (model.name.toLowerCase().includes('pro') && model.provider === 'openai') return 'research';
   if (model.provider === 'perplexity') return 'research';
-  // All other models (including GPT-5, Claude, Gemini, etc.) go to Chat
+  // All other models (GPT-5, Claude, Gemini, Grok, etc.) go to Chat
   return 'chat';
 }
 
