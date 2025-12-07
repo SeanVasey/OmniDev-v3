@@ -14,6 +14,7 @@ import {
   MoreVertical,
   Image as ImageIcon,
   User,
+  Activity,
 } from 'lucide-react';
 import { useHaptics } from '@/hooks/useHaptics';
 import { HAPTIC_TRIGGERS } from '@/lib/haptics/triggers';
@@ -22,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChatHistory } from '@/components/chat/ChatHistory';
 import { MediaLibrary } from '@/components/sidebar/MediaLibrary';
 import { ProjectSettingsDialog } from '@/components/projects/ProjectSettingsDialog';
+import { UsageMonitor } from '@/components/usage/UsageMonitor';
 import { cn } from '@/lib/utils';
 import type { Project, Chat, User as UserType, ProjectColor, ProjectIcon } from '@/types';
 
@@ -292,7 +294,7 @@ export function SidebarContent({
           />
 
           {/* Quick Links */}
-          <div className="pt-2 border-t border-[var(--border-subtle)]">
+          <div className="pt-2 border-t border-[var(--border-subtle)] space-y-1">
             <button
               onClick={() => {
                 trigger(HAPTIC_TRIGGERS.button.secondary);
@@ -314,9 +316,35 @@ export function SidebarContent({
               </span>
               <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
             </button>
+            <button
+              onClick={() => {
+                trigger(HAPTIC_TRIGGERS.button.secondary);
+                router.push('/usage');
+              }}
+              className="
+                w-full flex items-center justify-between
+                px-3 py-2.5
+                rounded-lg
+                text-[var(--text-secondary)]
+                hover:bg-[var(--bg-elevated)]
+                hover:text-[var(--text-primary)]
+                transition-colors
+              "
+            >
+              <span className="flex items-center gap-3">
+                <Activity className="w-5 h-5" />
+                <span className="text-sm">Usage & Billing</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
+            </button>
           </div>
         </nav>
       </ScrollArea>
+
+      {/* Usage Monitor */}
+      <div className="flex-shrink-0 px-3 pb-2">
+        <UsageMonitor variant="compact" />
+      </div>
 
       {/* User Panel (Sticky Footer) */}
       <div className="

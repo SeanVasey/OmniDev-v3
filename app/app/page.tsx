@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { toast } from 'sonner';
@@ -16,6 +16,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { useDatabaseSync } from '@/hooks/useDatabaseSync';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
+import { useUsageTracking } from '@/hooks/useUsageTracking';
 import { getModel } from '@/lib/ai/models';
 import { getWorkspaces, getUserChats } from '@/lib/supabase/database';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
@@ -85,6 +86,11 @@ export default function HomePage() {
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
   const { upload: uploadFiles, isUploading } = useFileUpload();
   const { generateImage, isGenerating } = useImageGeneration();
+  const { trackUsage, trackImageGeneration, canUseFeature } = useUsageTracking();
+
+  // Track request timing for usage
+  const requestStartTime = useRef<number>(0);
+  const lastInputMessage = useRef<string>('');
 
   // Load workspaces and starred chats on mount
   useEffect(() => {
@@ -129,6 +135,26 @@ export default function HomePage() {
       if (currentChatId && currentChatId !== 'temp' && textContent) {
         await saveMessage(currentChatId, 'assistant', textContent, []);
       }
+
+      // Track usage metrics
+      const latencyMs = requestStartTime.current > 0
+        ? Date.now() - requestStartTime.current
+        : 0;
+
+      await trackUsage({
+        modelId: currentModel.id,
+        provider: currentModel.provider,
+        type: 'chat',
+        inputText: lastInputMessage.current,
+        outputText: textContent || '',
+        latencyMs,
+        contextMode: activeContext || undefined,
+        userId,
+      });
+
+      requestStartTime.current = 0;
+      lastInputMessage.current = '';
+
       toast.success('Response complete');
     },
   });
@@ -169,6 +195,20 @@ export default function HomePage() {
   ) => {
     if (!message.trim() && attachments.length === 0) return;
 
+    // Check quota before proceeding
+    const quotaType = context === 'image' ? 'images' : context === 'video' ? 'videos' : 'tokens';
+    const quota = canUseFeature(quotaType);
+    if (!quota.allowed) {
+      toast.error('Usage limit reached', {
+        description: `You've used ${quota.limit} ${quotaType} this month. Upgrade for more.`,
+      });
+      return;
+    }
+
+    // Track request timing
+    requestStartTime.current = Date.now();
+    lastInputMessage.current = message;
+
     setActiveContext(context);
 
     // Create a new chat if this is the first message
@@ -205,6 +245,7 @@ export default function HomePage() {
 
     // Handle image generation mode
     if (context === 'image') {
+      const imageStartTime = Date.now();
       const generatedImage = await generateImage(message, aspectRatio || '1:1');
 
       if (generatedImage && chatId && chatId !== 'temp') {
@@ -221,6 +262,14 @@ export default function HomePage() {
           created_at: new Date().toISOString(),
         };
         addMessage(chatId, newMessage);
+
+        // Track image generation usage
+        await trackImageGeneration({
+          modelId: 'dall-e-3',
+          provider: 'openai',
+          latencyMs: Date.now() - imageStartTime,
+          userId,
+        });
       }
       return; // Don't submit to chat API for image generation
     }
