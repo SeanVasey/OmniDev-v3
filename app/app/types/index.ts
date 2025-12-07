@@ -125,3 +125,107 @@ export interface ProjectSettings {
 
 export type ProjectIcon = 'folder' | 'code' | 'design' | 'data' | 'research' | 'writing' | 'image' | 'video' | 'music' | 'chat';
 export type ProjectColor = 'orange' | 'blue' | 'green' | 'purple' | 'pink' | 'red' | 'yellow' | 'teal';
+
+// ============================================================================
+// Usage & Billing Types
+// ============================================================================
+
+export type SubscriptionTier = 'free' | 'pro' | 'enterprise';
+
+export interface TierLimits {
+  tokensPerMonth: number;
+  tokensPerDay: number;
+  imagesPerMonth: number;
+  videosPerMonth: number;
+  maxFileSize: number; // in bytes
+  maxContextWindow: number;
+  modelsAllowed: string[]; // model IDs allowed for this tier
+}
+
+export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
+  free: {
+    tokensPerMonth: 100000,      // 100K tokens/month
+    tokensPerDay: 10000,         // 10K tokens/day
+    imagesPerMonth: 10,
+    videosPerMonth: 0,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+    maxContextWindow: 32000,
+    modelsAllowed: ['gpt-5.1-chat', 'claude-4.5-haiku', 'gemini-2.5-flash', 'llama-3.1-70b'],
+  },
+  pro: {
+    tokensPerMonth: 2000000,     // 2M tokens/month
+    tokensPerDay: 100000,        // 100K tokens/day
+    imagesPerMonth: 100,
+    videosPerMonth: 20,
+    maxFileSize: 25 * 1024 * 1024, // 25MB
+    maxContextWindow: 200000,
+    modelsAllowed: ['*'], // All models
+  },
+  enterprise: {
+    tokensPerMonth: 10000000,    // 10M tokens/month
+    tokensPerDay: 500000,        // 500K tokens/day
+    imagesPerMonth: 500,
+    videosPerMonth: 100,
+    maxFileSize: 100 * 1024 * 1024, // 100MB
+    maxContextWindow: 2000000,
+    modelsAllowed: ['*'], // All models
+  },
+};
+
+export interface UsageLog {
+  id: string;
+  user_id: string;
+  model_id: string;
+  provider: string;
+  type: 'chat' | 'image' | 'video' | 'embedding';
+  tokens_input: number;
+  tokens_output: number;
+  cost: number;
+  latency_ms: number;
+  context_mode?: ContextMode;
+  created_at: string;
+}
+
+export interface UsageSummary {
+  period: 'day' | 'week' | 'month' | 'all';
+  tokensUsed: number;
+  tokensLimit: number;
+  tokensRemaining: number;
+  percentUsed: number;
+  imagesGenerated: number;
+  imagesLimit: number;
+  videosGenerated: number;
+  videosLimit: number;
+  totalCost: number;
+  requestCount: number;
+  averageLatency: number;
+  topModels: { modelId: string; count: number; tokens: number }[];
+  dailyUsage: { date: string; tokens: number; cost: number }[];
+}
+
+export interface ModelPricing {
+  modelId: string;
+  inputPer1kTokens: number;  // USD per 1K input tokens
+  outputPer1kTokens: number; // USD per 1K output tokens
+  imagePerGeneration?: number;
+  videoPerSecond?: number;
+}
+
+export const MODEL_PRICING: Record<string, ModelPricing> = {
+  'gpt-5.1': { modelId: 'gpt-5.1', inputPer1kTokens: 0.01, outputPer1kTokens: 0.03 },
+  'gpt-5.1-chat': { modelId: 'gpt-5.1-chat', inputPer1kTokens: 0.005, outputPer1kTokens: 0.015 },
+  'gpt-5': { modelId: 'gpt-5', inputPer1kTokens: 0.005, outputPer1kTokens: 0.015 },
+  'claude-4.5-opus': { modelId: 'claude-4.5-opus', inputPer1kTokens: 0.015, outputPer1kTokens: 0.075 },
+  'claude-4.5-sonnet': { modelId: 'claude-4.5-sonnet', inputPer1kTokens: 0.003, outputPer1kTokens: 0.015 },
+  'claude-4.5-haiku': { modelId: 'claude-4.5-haiku', inputPer1kTokens: 0.00025, outputPer1kTokens: 0.00125 },
+  'gemini-3-pro': { modelId: 'gemini-3-pro', inputPer1kTokens: 0.00125, outputPer1kTokens: 0.005 },
+  'gemini-2.5-pro': { modelId: 'gemini-2.5-pro', inputPer1kTokens: 0.00125, outputPer1kTokens: 0.005 },
+  'gemini-2.5-flash': { modelId: 'gemini-2.5-flash', inputPer1kTokens: 0.000075, outputPer1kTokens: 0.0003 },
+  'grok-4.1': { modelId: 'grok-4.1', inputPer1kTokens: 0.003, outputPer1kTokens: 0.015 },
+  'grok-4': { modelId: 'grok-4', inputPer1kTokens: 0.002, outputPer1kTokens: 0.01 },
+  'mistral-large': { modelId: 'mistral-large', inputPer1kTokens: 0.002, outputPer1kTokens: 0.006 },
+  'sonar-large': { modelId: 'sonar-large', inputPer1kTokens: 0.001, outputPer1kTokens: 0.001 },
+  'llama-3.1-70b': { modelId: 'llama-3.1-70b', inputPer1kTokens: 0.0009, outputPer1kTokens: 0.0009 },
+  'dall-e-3': { modelId: 'dall-e-3', inputPer1kTokens: 0, outputPer1kTokens: 0, imagePerGeneration: 0.04 },
+  'sora': { modelId: 'sora', inputPer1kTokens: 0, outputPer1kTokens: 0, videoPerSecond: 0.05 },
+};
