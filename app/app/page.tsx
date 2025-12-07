@@ -285,6 +285,8 @@ export default function HomePage() {
           isIncognito={isIncognitoMode}
           onIncognitoToggle={toggleIncognitoMode}
           disabled={isLoading || isUploading || isGenerating}
+          currentModel={currentModel}
+          onModelChange={handleModelChange}
         />
       </main>
 

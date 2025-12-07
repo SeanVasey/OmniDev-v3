@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Sparkles, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -35,38 +35,42 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'flex gap-3 px-4 py-4',
+        'flex gap-3 px-4 py-5',
         isUser && 'justify-end',
-        isAssistant && 'bg-[var(--bg-elevated)]'
+        isAssistant && 'bg-[var(--bg-elevated)]/50'
       )}
     >
-      <div className={cn('flex gap-3 max-w-3xl w-full', isUser && 'flex-row-reverse')}>
+      <div className={cn('flex gap-4 max-w-3xl w-full', isUser && 'flex-row-reverse')}>
         {/* Avatar */}
         <div
           className={cn(
-            'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+            'flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center shadow-lg',
             isUser
-              ? 'bg-[var(--purple-600)] text-white'
-              : 'bg-[var(--bg-muted)] text-[var(--text-muted)]'
+              ? 'bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-primary-hover)] shadow-[var(--purple-glow)]/30'
+              : 'bg-[var(--bg-muted)]/80 border border-[var(--border-subtle)] shadow-black/20'
           )}
         >
-          {isUser ? 'U' : 'AI'}
+          {isUser ? (
+            <User className="w-4 h-4 text-white" />
+          ) : (
+            <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
+          )}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div
             className={cn(
-              'rounded-2xl px-4 py-3',
+              'rounded-2xl',
               isUser
-                ? 'bg-[var(--purple-600)] text-white ml-auto max-w-[85%]'
-                : 'bg-transparent text-[var(--text-primary)]'
+                ? 'bg-[var(--accent-primary)] text-white px-4 py-3 ml-auto max-w-[85%] shadow-lg shadow-[var(--purple-glow)]/20'
+                : 'text-[var(--text-primary)]'
             )}
           >
             {isUser ? (
-              <p className="text-base whitespace-pre-wrap break-words">{message.content}</p>
+              <p className="text-base whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
             ) : (
-              <div className="prose prose-invert max-w-none">
+              <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-[var(--bg-muted)] prose-pre:border prose-pre:border-[var(--border-subtle)] prose-pre:rounded-xl prose-code:text-[var(--accent-primary)] prose-headings:text-[var(--text-primary)]">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
                   {message.content}
                 </ReactMarkdown>
@@ -76,27 +80,29 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
           {/* Actions (for assistant messages) */}
           {isAssistant && (
-            <div className="flex items-center gap-2 mt-2 px-2">
+            <div className="flex items-center gap-2 mt-3">
               <button
                 onClick={handleCopy}
-                className="
-                  flex items-center gap-1.5
-                  px-2 py-1
-                  text-xs text-[var(--text-muted)]
-                  hover:text-[var(--text-primary)]
-                  rounded-lg
-                  hover:bg-[var(--bg-muted)]
-                  transition-colors
-                "
+                className={cn(
+                  "flex items-center gap-1.5",
+                  "px-3 py-1.5",
+                  "text-xs font-medium",
+                  "rounded-lg",
+                  "border border-[var(--border-subtle)]/50",
+                  "transition-all duration-200",
+                  isCopied
+                    ? "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 border-[var(--accent-primary)]/30"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]/50 hover:border-[var(--border-default)]"
+                )}
               >
                 {isCopied ? (
                   <>
-                    <Check className="w-3 h-3" />
-                    <span>Copied</span>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3 h-3" />
+                    <Copy className="w-3.5 h-3.5" />
                     <span>Copy</span>
                   </>
                 )}
@@ -105,7 +111,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           )}
 
           {/* Timestamp */}
-          <div className="text-xs text-[var(--text-muted)] mt-1 px-2">
+          <div className={cn(
+            "text-xs text-[var(--text-muted)]/70 mt-2",
+            isUser && "text-right"
+          )}>
             {new Date(message.created_at).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
