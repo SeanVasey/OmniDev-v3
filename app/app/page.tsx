@@ -17,7 +17,7 @@ import { useDatabaseSync } from '@/hooks/useDatabaseSync';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
 import { getModel } from '@/lib/ai/models';
-import { getWorkspaces } from '@/lib/supabase/database';
+import { getWorkspaces, getUserChats } from '@/lib/supabase/database';
 import type { ContextMode, AspectRatio, Project, Chat, AIModel, Message as MessageType } from '@/types';
 
 const mockProjects: Project[] = [
@@ -52,6 +52,7 @@ const mockChats: Chat[] = [
     is_pinned: false,
     is_archived: false,
     is_incognito: false,
+    is_starred: false,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -63,6 +64,7 @@ const mockChats: Chat[] = [
     is_pinned: false,
     is_archived: false,
     is_incognito: false,
+    is_starred: false,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -75,6 +77,7 @@ export default function HomePage() {
   );
   const [activeContext, setActiveContext] = useState<ContextMode>(null);
   const [workspaces, setWorkspaces] = useState<Project[]>([]);
+  const [starredChats, setStarredChats] = useState<Chat[]>([]);
 
   const { user, userId, isGuest } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
@@ -83,13 +86,19 @@ export default function HomePage() {
   const { upload: uploadFiles, isUploading } = useFileUpload();
   const { generateImage, isGenerating } = useImageGeneration();
 
-  // Load workspaces on mount
+  // Load workspaces and starred chats on mount
   useEffect(() => {
-    const loadWorkspaces = async () => {
-      const fetchedWorkspaces = await getWorkspaces(userId);
+    const loadData = async () => {
+      const [fetchedWorkspaces, fetchedChats] = await Promise.all([
+        getWorkspaces(userId),
+        getUserChats(userId, false),
+      ]);
       setWorkspaces(fetchedWorkspaces);
+      // Filter starred chats
+      const starred = fetchedChats.filter(chat => chat.is_starred);
+      setStarredChats(starred);
     };
-    loadWorkspaces();
+    loadData();
   }, [userId]);
 
   // Handle model change
@@ -267,10 +276,17 @@ export default function HomePage() {
             user={user}
             userId={userId}
             currentChatId={currentChatId}
+            starredChats={starredChats}
             onNewChat={handleNewChat}
             onSelectChat={handleSelectChat}
             onSelectProject={handleSelectProject}
             onCreateProject={() => {}}
+            onUpdateProject={(project) => {
+              setWorkspaces(prev => prev.map(p => p.id === project.id ? project : p));
+            }}
+            onDeleteProject={(projectId) => {
+              setWorkspaces(prev => prev.filter(p => p.id !== projectId));
+            }}
           />
         </MobileSidebar>
 
