@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 /* ═══════════════════════════════════════════════════════════════
    OMNIDEV V3.0 DESIGN SYSTEM
-   Mobile-First AI Chat Workspace
+   Mobile-First AI Chat Workspace - ChatGPT-inspired theme
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
@@ -14,7 +14,7 @@
      TYPOGRAPHY
      ═══════════════════════════════════════════════════════════════ */
 
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+  --font-primary: 'Reddit Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
 
   --font-light: 300;
   --font-regular: 400;
@@ -46,85 +46,85 @@
   --tracking-widest: 0.1em;
 
   /* ═══════════════════════════════════════════════════════════════
-     BRAND BASE PALETTE (VASEY/AI)
+     CHATGPT-INSPIRED COLOR PALETTE
      ═══════════════════════════════════════════════════════════════ */
 
-  --brand-primary-teal: #22A4C1;
-  --brand-dark-blue: #2B3E47;
+  --brand-primary-green: #10a37f;
+  --brand-dark: #212121;
   --brand-white: #FFFFFF;
-  --brand-light-gray: #EAEAEA;
-  --brand-medium-gray: #ABABAB;
-  --brand-charcoal: #32505A;
+  --brand-light-gray: #ececec;
+  --brand-medium-gray: #8e8e8e;
+  --brand-charcoal: #171717;
 
   /* ═══════════════════════════════════════════════════════════════
-     MONOCHROME FOUNDATION
+     MONOCHROME FOUNDATION (ChatGPT-style neutrals)
      ═══════════════════════════════════════════════════════════════ */
 
   --black-pure: #000000;
-  --black-deep: var(--brand-dark-blue);
-  --black-elevated: #243543;
-  --grey-950: #101821;
-  --grey-900: var(--brand-charcoal);
-  --grey-850: #2C4253;
-  --grey-800: #3A4E5E;
-  --grey-700: #4E6170;
-  --grey-600: #677987;
-  --grey-500: var(--brand-medium-gray);
-  --grey-400: #C0C6CB;
-  --grey-300: var(--brand-light-gray);
-  --grey-200: #F0F2F4;
-  --grey-100: #F7F8FA;
-  --grey-50: #FAFBFC;
+  --black-deep: #212121;
+  --black-elevated: #2f2f2f;
+  --grey-950: #0d0d0d;
+  --grey-900: #171717;
+  --grey-850: #1e1e1e;
+  --grey-800: #2f2f2f;
+  --grey-700: #424242;
+  --grey-600: #676767;
+  --grey-500: #8e8e8e;
+  --grey-400: #b4b4b4;
+  --grey-300: #d1d1d1;
+  --grey-200: #e5e5e5;
+  --grey-100: #ececec;
+  --grey-50: #f7f7f8;
   --white-pure: var(--brand-white);
 
   /* ═══════════════════════════════════════════════════════════════
-     PRIMARY ACCENT (TEAL)
+     PRIMARY ACCENT (ChatGPT Green)
      ═══════════════════════════════════════════════════════════════ */
 
-  --purple-50: #E6F7FB;
-  --purple-100: #CBEFFA;
-  --purple-200: #9EDFF4;
-  --purple-300: #72CFEF;
-  --purple-400: #45BFE9;
-  --purple-500: #2CB3D9;
-  --purple-600: var(--brand-primary-teal);
-  --purple-700: #1B839A;
-  --purple-800: #125A6B;
-  --purple-900: #0A3843;
-  --purple-950: #041921;
-  --purple-glow: rgba(34, 164, 193, 0.35);
-  --purple-glow-subtle: rgba(34, 164, 193, 0.15);
+  --purple-50: #e6f7f2;
+  --purple-100: #ccefe5;
+  --purple-200: #99dfcb;
+  --purple-300: #66cfb1;
+  --purple-400: #33bf97;
+  --purple-500: #10a37f;
+  --purple-600: #10a37f;
+  --purple-700: #0d8268;
+  --purple-800: #0a6250;
+  --purple-900: #064138;
+  --purple-950: #032120;
+  --purple-glow: rgba(16, 163, 127, 0.35);
+  --purple-glow-subtle: rgba(16, 163, 127, 0.15);
 
   /* ═══════════════════════════════════════════════════════════════
-     SECONDARY ACCENT (CHARCOAL)
+     SECONDARY ACCENT (Warm neutrals)
      ═══════════════════════════════════════════════════════════════ */
 
-  --orange-50: #F3F5F7;
-  --orange-100: #E4E7EA;
-  --orange-200: #CFD4D8;
-  --orange-300: #B8BFC5;
-  --orange-400: #A1A9B0;
-  --orange-500: var(--brand-charcoal);
-  --orange-600: #273843;
-  --orange-700: #1E2A32;
-  --orange-800: #151D23;
-  --orange-900: #0C1115;
-  --orange-glow: rgba(50, 80, 90, 0.35);
-  --orange-glow-subtle: rgba(50, 80, 90, 0.15);
+  --orange-50: #faf5f2;
+  --orange-100: #f5ebe5;
+  --orange-200: #ebd7cc;
+  --orange-300: #e0c3b2;
+  --orange-400: #d5af99;
+  --orange-500: #c99b7f;
+  --orange-600: #b88a6f;
+  --orange-700: #a07a62;
+  --orange-800: #886a55;
+  --orange-900: #705a48;
+  --orange-glow: rgba(201, 155, 127, 0.35);
+  --orange-glow-subtle: rgba(201, 155, 127, 0.15);
 
   /* ═══════════════════════════════════════════════════════════════
-     TERTIARY ACCENT (MEDIUM GRAY)
+     TERTIARY ACCENT (Neutral grays)
      ═══════════════════════════════════════════════════════════════ */
 
-  --coral-50: #FAFAFA;
-  --coral-100: #F3F3F3;
-  --coral-200: #E8E8E8;
-  --coral-300: #DEDEDE;
-  --coral-400: #D4D4D4;
-  --coral-500: var(--brand-medium-gray);
-  --coral-600: #8E8E8E;
-  --coral-700: #747474;
-  --coral-glow: rgba(171, 171, 171, 0.35);
+  --coral-50: #fafafa;
+  --coral-100: #f4f4f5;
+  --coral-200: #e4e4e7;
+  --coral-300: #d4d4d8;
+  --coral-400: #a1a1aa;
+  --coral-500: #71717a;
+  --coral-600: #52525b;
+  --coral-700: #3f3f46;
+  --coral-glow: rgba(113, 113, 122, 0.35);
 
   /* ═══════════════════════════════════════════════════════════════
      BLUE ACCENT (Temporary Mode)
@@ -149,15 +149,15 @@
   --color-info-muted: #2563eb;
 
   /* ═══════════════════════════════════════════════════════════════
-     GLASSMORPHISM
+     GLASSMORPHISM (ChatGPT-style subtle glass)
      ═══════════════════════════════════════════════════════════════ */
 
-  --glass-bg: rgba(22, 32, 38, 0.80);
-  --glass-bg-elevated: rgba(22, 32, 38, 0.90);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-subtle: rgba(255, 255, 255, 0.04);
-  --glass-blur: 20px;
-  --glass-blur-heavy: 32px;
+  --glass-bg: rgba(33, 33, 33, 0.95);
+  --glass-bg-elevated: rgba(47, 47, 47, 0.98);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-subtle: rgba(255, 255, 255, 0.05);
+  --glass-blur: 12px;
+  --glass-blur-heavy: 24px;
 
   /* ═══════════════════════════════════════════════════════════════
      SPACING SCALE
@@ -281,58 +281,58 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   THEME: DARK MODE (Default)
+   THEME: DARK MODE (ChatGPT-inspired)
    ═══════════════════════════════════════════════════════════════ */
 
 [data-theme="dark"],
 :root {
-  --bg-primary: var(--black-deep);
-  --bg-secondary: var(--grey-900);
-  --bg-elevated: var(--grey-850);
-  --bg-muted: var(--grey-950);
+  --bg-primary: #212121;
+  --bg-secondary: #171717;
+  --bg-elevated: #2f2f2f;
+  --bg-muted: #0d0d0d;
 
-  --text-primary: var(--grey-100);
-  --text-secondary: var(--grey-400);
-  --text-muted: var(--grey-500);
-  --text-placeholder: var(--grey-600);
+  --text-primary: #ececec;
+  --text-secondary: #b4b4b4;
+  --text-muted: #8e8e8e;
+  --text-placeholder: #676767;
 
-  --border-default: var(--grey-800);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-strong: var(--grey-700);
+  --border-default: #424242;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: #525252;
 
-  --accent-primary: var(--purple-600);
-  --accent-primary-hover: var(--purple-500);
+  --accent-primary: #10a37f;
+  --accent-primary-hover: #1eb88e;
   --accent-secondary: var(--orange-500);
   --accent-tertiary: var(--coral-500);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   THEME: INCOGNITO/GHOST MODE
+   THEME: INCOGNITO/GHOST MODE (Deeper dark)
    ═══════════════════════════════════════════════════════════════ */
 
 [data-mode="incognito"] {
-  --bg-primary: var(--black-pure);
+  --bg-primary: #0a0a0a;
   --bg-secondary: #050505;
-  --bg-elevated: var(--black-deep);
+  --bg-elevated: #141414;
   --bg-muted: #030303;
 
-  --text-primary: var(--grey-300);
-  --text-secondary: var(--grey-500);
-  --text-muted: var(--grey-600);
+  --text-primary: #a0a0a0;
+  --text-secondary: #707070;
+  --text-muted: #505050;
 
-  --border-default: rgba(255, 255, 255, 0.05);
+  --border-default: rgba(255, 255, 255, 0.06);
   --border-subtle: rgba(255, 255, 255, 0.03);
 
-  --accent-primary: var(--grey-400);
-  --accent-primary-hover: var(--grey-300);
+  --accent-primary: #707070;
+  --accent-primary-hover: #909090;
 
-  --ghost-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10c-8.284 0-15 6.716-15 15v15c0 2.761 2.239 5 5 5h3v-3h-3c-1.105 0-2-.895-2-2V25c0-6.627 5.373-12 12-12s12 5.373 12 12v15c0 1.105-.895 2-2 2h-3v3h3c2.761 0 5-2.239 5-5V25c0-8.284-6.716-15-15-15z' fill='%23ffffff' fill-opacity='0.02'/%3E%3C/svg%3E");
+  --ghost-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10c-8.284 0-15 6.716-15 15v15c0 2.761 2.239 5 5 5h3v-3h-3c-1.105 0-2-.895-2-2V25c0-6.627 5.373-12 12-12s12 5.373 12 12v15c0 1.105-.895 2-2 2h-3v3h3c2.761 0 5-2.239 5-5V25c0-8.284-6.716-15-15-15z' fill='%23ffffff' fill-opacity='0.015'/%3E%3C/svg%3E");
 }
 
 [data-mode="incognito"] body::before {
@@ -345,26 +345,26 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   THEME: LIGHT MODE
+   THEME: LIGHT MODE (ChatGPT-inspired clean white)
    ═══════════════════════════════════════════════════════════════ */
 
 [data-theme="light"] {
-  --bg-primary: var(--white-pure);
-  --bg-secondary: var(--grey-50);
-  --bg-elevated: var(--white-pure);
-  --bg-muted: var(--grey-100);
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f8;
+  --bg-elevated: #ffffff;
+  --bg-muted: #ececec;
 
-  --text-primary: var(--grey-900);
-  --text-secondary: var(--grey-600);
-  --text-muted: var(--grey-500);
-  --text-placeholder: var(--grey-400);
+  --text-primary: #0d0d0d;
+  --text-secondary: #424242;
+  --text-muted: #676767;
+  --text-placeholder: #8e8e8e;
 
-  --border-default: var(--grey-200);
-  --border-subtle: var(--grey-100);
-  --border-strong: var(--grey-300);
+  --border-default: #e5e5e5;
+  --border-subtle: #ececec;
+  --border-strong: #d1d1d1;
 
-  --glass-bg: rgba(255, 255, 255, 0.80);
-  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 0.1);
 }
 
 /* ═══════════════════════════════════════════════════════════════

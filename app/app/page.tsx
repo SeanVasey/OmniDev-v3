@@ -48,7 +48,7 @@ const mockChats: Chat[] = [
     id: '1',
     user_id: 'user1',
     title: 'Build a React component',
-    model_id: 'gpt-4o',
+    model_id: 'gpt-5.1-chat',
     is_pinned: false,
     is_archived: false,
     is_incognito: false,
@@ -59,7 +59,7 @@ const mockChats: Chat[] = [
     id: '2',
     user_id: 'user1',
     title: 'Design system help',
-    model_id: 'claude-3.5-sonnet',
+    model_id: 'claude-4.5-sonnet',
     is_pinned: false,
     is_archived: false,
     is_incognito: false,
@@ -69,9 +69,9 @@ const mockChats: Chat[] = [
 ];
 
 export default function HomePage() {
-  // Initialize with GPT-4o (most reliable default)
+  // Initialize with GPT-5.1 Chat as default
   const [currentModel, setCurrentModel] = useState<AIModel>(
-    getModel('gpt-4o') || getModel('gpt-5.1')!
+    getModel('gpt-5.1-chat') || getModel('gpt-5.1')!
   );
   const [activeContext, setActiveContext] = useState<ContextMode>(null);
   const [workspaces, setWorkspaces] = useState<Project[]>([]);
@@ -285,6 +285,8 @@ export default function HomePage() {
           isIncognito={isIncognitoMode}
           onIncognitoToggle={toggleIncognitoMode}
           disabled={isLoading || isUploading || isGenerating}
+          currentModel={currentModel}
+          onModelChange={handleModelChange}
         />
       </main>
 
