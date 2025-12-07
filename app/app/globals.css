@@ -474,6 +474,45 @@ body {
   }
 }
 
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes oil-slick {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(30deg);
+  }
+  100% {
+    filter: hue-rotate(0deg);
+  }
+}
+
+@keyframes circuit-pulse {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
 @layer components {
   /* Gradient text effect */
   .gradient-text {
@@ -515,6 +554,26 @@ body {
   /* Float animation */
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+
+  /* Slow spin animation */
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
+  }
+
+  /* Oil slick effect */
+  .animate-oil-slick {
+    animation: oil-slick 5s ease-in-out infinite;
+  }
+
+  /* Circuit pulse effect */
+  .animate-circuit-pulse {
+    animation: circuit-pulse 2s ease-in-out infinite;
+  }
+
+  /* Scan line effect */
+  .animate-scan-line {
+    animation: scan-line 2s linear infinite;
   }
 
   /* Modern button styles */

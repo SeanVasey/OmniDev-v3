@@ -9,14 +9,34 @@ import rehypeHighlight from 'rehype-highlight';
 import { useHaptics } from '@/hooks/useHaptics';
 import { HAPTIC_TRIGGERS } from '@/lib/haptics/triggers';
 import { cn } from '@/lib/utils';
-import type { Message } from '@/types';
+import { ThinkingProcess } from './ThinkingProcess';
+import { MediaGenerationPlaceholder } from './MediaGenerationPlaceholder';
+import type { Message, AspectRatio } from '@/types';
 import 'highlight.js/styles/github-dark.css';
 
 interface MessageBubbleProps {
   message: Message;
+  thinkingContent?: string;
+  isThinkingComplete?: boolean;
+  isThinkingStreaming?: boolean;
+  thinkingDuration?: number;
+  isGeneratingMedia?: boolean;
+  mediaProgress?: number;
+  mediaType?: 'image' | 'video';
+  mediaPreviewUrl?: string;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  thinkingContent,
+  isThinkingComplete = true,
+  isThinkingStreaming = false,
+  thinkingDuration,
+  isGeneratingMedia = false,
+  mediaProgress = 0,
+  mediaType,
+  mediaPreviewUrl,
+}: MessageBubbleProps) {
   const { trigger } = useHaptics();
   const [isCopied, setIsCopied] = useState(false);
   const isUser = message.role === 'user';
@@ -28,6 +48,14 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
+
+  // Check if message contains an image (markdown image syntax)
+  const hasImage = message.content.includes('![');
+
+  // Extract aspect ratio from message content if present
+  const aspectRatioMatch = message.content.match(/\[Aspect Ratio: (\d+:\d+)\]/);
+  const extractedAspectRatio = aspectRatioMatch?.[1] as AspectRatio | undefined;
+  const aspectRatio = message.aspect_ratio || extractedAspectRatio || '1:1';
 
   return (
     <motion.div
@@ -59,6 +87,31 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
         {/* Content */}
         <div className="flex-1 min-w-0">
+          {/* Thinking Process (for assistant messages with thinking content) */}
+          {isAssistant && thinkingContent && (
+            <ThinkingProcess
+              content={thinkingContent}
+              isComplete={isThinkingComplete}
+              isStreaming={isThinkingStreaming}
+              thinkingDuration={thinkingDuration}
+            />
+          )}
+
+          {/* Media Generation Placeholder */}
+          {isAssistant && isGeneratingMedia && mediaType && !hasImage && (
+            <div className="mb-4">
+              <MediaGenerationPlaceholder
+                type={mediaType}
+                aspectRatio={aspectRatio}
+                progress={mediaProgress}
+                prompt={message.content}
+                previewUrl={mediaPreviewUrl}
+                isComplete={mediaProgress >= 100}
+              />
+            </div>
+          )}
+
+          {/* Main message content */}
           <div
             className={cn(
               'rounded-2xl',
@@ -70,7 +123,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             {isUser ? (
               <p className="text-base whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
             ) : (
-              <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-[var(--bg-muted)] prose-pre:border prose-pre:border-[var(--border-subtle)] prose-pre:rounded-xl prose-code:text-[var(--accent-primary)] prose-headings:text-[var(--text-primary)]">
+              <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-[var(--bg-muted)] prose-pre:border prose-pre:border-[var(--border-subtle)] prose-pre:rounded-xl prose-code:text-[var(--accent-primary)] prose-headings:text-[var(--text-primary)] prose-img:rounded-xl prose-img:shadow-lg">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
                   {message.content}
                 </ReactMarkdown>
