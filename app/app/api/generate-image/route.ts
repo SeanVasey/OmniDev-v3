@@ -24,9 +24,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
-    });
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'OpenAI API key not configured' },
+        { status: 500 }
+      );
+    }
+
+    const openai = new OpenAI({ apiKey });
 
     // Map aspect ratio to DALL·E 3 size
     const sizeMap: Record<string, '1024x1024' | '1792x1024' | '1024x1792'> = {

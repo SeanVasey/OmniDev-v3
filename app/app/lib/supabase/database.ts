@@ -27,7 +27,7 @@ export async function createChat(
   try {
     const supabase = createClient();
 
-    const chatData: DbChatInsert = {
+    const chatData = {
       user_id: userId,
       model_id: modelId,
       title,
@@ -35,15 +35,25 @@ export async function createChat(
       is_incognito: false,
     };
 
-    // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-    const { data, error } = await supabase.from('chats').insert(chatData).select().single();
+    // Type assertion needed due to Supabase generic type limitations
+    const result = await supabase
+      .from('chats')
+      .insert(chatData as any)
+      .select()
+      .single();
+    const { data, error } = result as { data: DbChat | null; error: any };
 
     if (error) {
       console.error('Error creating chat:', error);
       return null;
     }
 
-    return dbChatToChat(data);
+    if (!data) {
+      console.error('No data returned from insert');
+      return null;
+    }
+
+    return dbChatToChat(data as DbChat);
   } catch (error) {
     console.error('Exception creating chat:', error);
     return null;
