@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    // Disable ESLint during builds - run separately via npm run lint
+    ignoreDuringBuilds: true,
+  },
   experimental: {
+    instrumentationHook: true,
     serverActions: {
       bodySizeLimit: '10mb',
     },
