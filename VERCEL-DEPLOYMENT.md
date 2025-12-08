@@ -254,7 +254,7 @@ Add CORS headers to API routes:
 ```typescript
 export async function POST(req: Request) {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'https://your-app.vercel.app', // For production, replace with your specific domain
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
