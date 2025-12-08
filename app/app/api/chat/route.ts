@@ -3,7 +3,7 @@ import { getAIModel, getSystemPrompt } from '@/lib/ai/providers';
 import { isProviderConfigured, getMissingProviderMessage } from '@/lib/env';
 import { getModel } from '@/lib/ai/models';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
