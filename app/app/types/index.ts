@@ -212,20 +212,32 @@ export interface ModelPricing {
 }
 
 export const MODEL_PRICING: Record<string, ModelPricing> = {
+  // GPT-5.1 Series
   'gpt-5.1': { modelId: 'gpt-5.1', inputPer1kTokens: 0.01, outputPer1kTokens: 0.03 },
   'gpt-5.1-chat': { modelId: 'gpt-5.1-chat', inputPer1kTokens: 0.005, outputPer1kTokens: 0.015 },
-  'gpt-5': { modelId: 'gpt-5', inputPer1kTokens: 0.005, outputPer1kTokens: 0.015 },
+  'gpt-5.1-pro': { modelId: 'gpt-5.1-pro', inputPer1kTokens: 0.015, outputPer1kTokens: 0.045 },
+  'gpt-5.1-nano': { modelId: 'gpt-5.1-nano', inputPer1kTokens: 0.001, outputPer1kTokens: 0.003 },
+  'gpt-5.1-mini': { modelId: 'gpt-5.1-mini', inputPer1kTokens: 0.003, outputPer1kTokens: 0.009 },
+  'gpt-5.1-codex': { modelId: 'gpt-5.1-codex', inputPer1kTokens: 0.008, outputPer1kTokens: 0.024 },
+  'gpt-5.1-codex-mini': { modelId: 'gpt-5.1-codex-mini', inputPer1kTokens: 0.004, outputPer1kTokens: 0.012 },
+  'gpt-5.1-codex-max': { modelId: 'gpt-5.1-codex-max', inputPer1kTokens: 0.02, outputPer1kTokens: 0.06 },
+  // Claude 4.5 Series
   'claude-4.5-opus': { modelId: 'claude-4.5-opus', inputPer1kTokens: 0.015, outputPer1kTokens: 0.075 },
   'claude-4.5-sonnet': { modelId: 'claude-4.5-sonnet', inputPer1kTokens: 0.003, outputPer1kTokens: 0.015 },
   'claude-4.5-haiku': { modelId: 'claude-4.5-haiku', inputPer1kTokens: 0.00025, outputPer1kTokens: 0.00125 },
+  // Gemini Series
   'gemini-3-pro': { modelId: 'gemini-3-pro', inputPer1kTokens: 0.00125, outputPer1kTokens: 0.005 },
   'gemini-2.5-pro': { modelId: 'gemini-2.5-pro', inputPer1kTokens: 0.00125, outputPer1kTokens: 0.005 },
   'gemini-2.5-flash': { modelId: 'gemini-2.5-flash', inputPer1kTokens: 0.000075, outputPer1kTokens: 0.0003 },
+  // Other Providers
   'grok-4.1': { modelId: 'grok-4.1', inputPer1kTokens: 0.003, outputPer1kTokens: 0.015 },
   'grok-4': { modelId: 'grok-4', inputPer1kTokens: 0.002, outputPer1kTokens: 0.01 },
   'mistral-large': { modelId: 'mistral-large', inputPer1kTokens: 0.002, outputPer1kTokens: 0.006 },
   'sonar-large': { modelId: 'sonar-large', inputPer1kTokens: 0.001, outputPer1kTokens: 0.001 },
   'llama-3.1-70b': { modelId: 'llama-3.1-70b', inputPer1kTokens: 0.0009, outputPer1kTokens: 0.0009 },
+  // Image & Video Generation
   'dall-e-3': { modelId: 'dall-e-3', inputPer1kTokens: 0, outputPer1kTokens: 0, imagePerGeneration: 0.04 },
-  'sora': { modelId: 'sora', inputPer1kTokens: 0, outputPer1kTokens: 0, videoPerSecond: 0.05 },
+  'image-1': { modelId: 'image-1', inputPer1kTokens: 0, outputPer1kTokens: 0, imagePerGeneration: 0.02 },
+  'sora-2': { modelId: 'sora-2', inputPer1kTokens: 0, outputPer1kTokens: 0, videoPerSecond: 0.05 },
+  'sora-2-pro': { modelId: 'sora-2-pro', inputPer1kTokens: 0, outputPer1kTokens: 0, videoPerSecond: 0.10 },
 };

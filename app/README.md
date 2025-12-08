@@ -1,52 +1,71 @@
-# OmniDev V3.0 🚀
+# OmniDev V3.0
 
-A modern, mobile-first multimodal AI chat workspace with comprehensive haptic feedback, multiple LLM provider support, and a beautiful glassmorphic design inspired by the best of ChatGPT, Claude, and Qwen.
+A modern, mobile-first multimodal AI chat workspace with comprehensive haptic feedback, multiple LLM provider support, usage monitoring, and a beautiful glassmorphic design inspired by the best of ChatGPT, Claude, and Qwen.
 
-## ✨ Features
+## Features
 
 ### Design & UX
-- 🎨 **VASEY/AI Brand Colors** - Teal primary accent (#22A4C1), charcoal secondary (#32505A), and dark blue background (#2B3E47)
-- 📱 **Mobile-First Design** - Optimized for touch interactions with 44px minimum touch targets
-- 🎭 **Incognito Mode** - Zero-persistence ghost mode with visual differentiation
-- ✨ **Glassmorphism** - Beautiful floating capsule composer with backdrop blur effects
-- 💫 **Smooth Animations** - 60fps animations powered by Framer Motion
-- 🔔 **Haptic Feedback** - Comprehensive vibration feedback for every interaction
+- **ChatGPT-Inspired Theme** - Reddit Sans font, refined color palette with CSS variables
+- **Mobile-First Design** - Optimized for touch interactions with 44px minimum touch targets
+- **Incognito Mode** - Zero-persistence ghost mode with visual differentiation
+- **Glassmorphism** - Beautiful floating capsule composer with backdrop blur effects
+- **Smooth Animations** - 60fps animations powered by Framer Motion
+- **Haptic Feedback** - Comprehensive vibration feedback for every interaction
 
 ### Core Functionality
-- 💬 **Floating Capsule Composer** - Claude-inspired input with context pills
-- 🗂️ **Sidebar Navigation** - ChatGPT-style sidebar with projects and recent chats
-- 🌐 **Context Modes** - Thinking, Search, Deep Research, and Image Generation
-- 📐 **Aspect Ratio Selector** - For image generation tasks (1:1, 3:4, 4:3, 16:9, 9:16)
-- 📎 **File Attachments** - Support for documents, images, videos, and audio
-- 🎙️ **Voice Input** - Voice recording with waveform visualization
-- 🤖 **Model Selector** - Quick switching between different AI models
+- **Floating Capsule Composer** - Claude-inspired input with context pills
+- **Sidebar Navigation** - ChatGPT-style sidebar with projects, starred chats, and media library
+- **Context Modes** - Thinking, Search, Deep Research, Image, and Video Generation
+- **Aspect Ratio Selector** - For image/video generation (1:1, 3:4, 4:3, 16:9, 9:16)
+- **File Attachments** - Support for documents, images, videos, code files
+- **Code Blocks** - Syntax highlighting with language labels and copy functionality
+- **Starred Chats** - Quick access to favorite conversations
+- **Media Library** - Thumbnail grid of recent image/video generations
 
-### LLM Provider Support
-- ✅ OpenAI (GPT-4o, GPT-4 Turbo, DALL·E 3)
-- ✅ Anthropic (Claude 3.5 Sonnet, Claude 3 Opus)
-- ✅ Google (Gemini 1.5 Pro - 1M context window)
-- ✅ xAI (Grok Beta)
-- ✅ Mistral AI (Mistral Large)
-- ✅ Perplexity AI (Sonar Large with web search)
-- ✅ Meta LLaMA (via Together AI)
-- ✅ Local LLaMA (via Ollama/LM Studio)
+### LLM Provider Support (25+ Models)
 
-## 🛠️ Tech Stack
+| Provider | Models |
+|----------|--------|
+| **OpenAI** | GPT-5.1 series, GPT-5 series, DALL-E 3, Sora 2 |
+| **Anthropic** | Claude 4.5 Opus, Sonnet, Haiku |
+| **Google** | Gemini 3 Pro (2M context), Gemini 2.5 Pro/Flash |
+| **xAI** | Grok 4.1, Grok 4 |
+| **Mistral AI** | Mistral Large |
+| **Perplexity** | Sonar Large (web search) |
+| **Meta** | LLaMA 3.1 70B (via Together AI) |
+| **Local** | LLaMA 3.1 (via Ollama) |
+
+### Usage & Billing
+- **Usage Monitor** - Toggleable widget showing token usage, costs, and limits
+- **Subscription Tiers** - Free, Pro, and Enterprise with configurable limits
+- **Quota Enforcement** - Automatic limit checking before requests
+- **Usage Analytics** - Dashboard with charts, top models, and activity history
+
+### Pages
+- `/` - Main chat interface
+- `/chats` - All conversations with search and filters
+- `/models` - AI models directory with capabilities and tips
+- `/help` - Documentation wiki and guides
+- `/usage` - Usage analytics and billing dashboard
+- `/settings` - App preferences and account settings
+- `/profile` - User profile management
+
+## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **UI Library**: React 18
-- **Styling**: Tailwind CSS 3.4 + Custom Design Tokens
+- **Styling**: Tailwind CSS 3.4 + CSS Variables Design System
 - **Animations**: Framer Motion 11
-- **Typography**: Inter (Google Fonts Variable)
-- **Database**: Supabase (PostgreSQL)
-- **Auth**: Supabase Auth (Google OAuth)
-- **State Management**: Zustand
-- **AI SDK**: Vercel AI SDK
-- **UI Components**: Radix UI
+- **Typography**: Reddit Sans (Google Fonts)
+- **Database**: Supabase (PostgreSQL with RLS)
+- **Auth**: Supabase Auth (Email, Google OAuth)
+- **State Management**: Zustand with Persistence
+- **AI SDK**: Vercel AI SDK v5
+- **UI Components**: Radix UI Primitives
 - **Icons**: Lucide React
 - **Markdown**: react-markdown + rehype-highlight + remark-gfm
 
-## 📦 Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -64,18 +83,30 @@ A modern, mobile-first multimodal AI chat workspace with comprehensive haptic fe
    cp .env.local.example .env.local
    ```
 
-   Then edit `.env.local` with your API keys:
-   - Supabase credentials
-   - LLM provider API keys (OpenAI, Anthropic, Google, etc.)
+   Edit `.env.local` with your API keys:
+   ```env
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+
+   # LLM Providers
+   OPENAI_API_KEY=sk-...
+   ANTHROPIC_API_KEY=sk-ant-...
+   GOOGLE_GENERATIVE_AI_API_KEY=...
+   XAI_API_KEY=...
+   MISTRAL_API_KEY=...
+   PERPLEXITY_API_KEY=...
+   TOGETHER_AI_API_KEY=...
+   ```
 
 4. **Set up Supabase database**
-   - Create a Supabase project at https://supabase.com
-   - Run the database migration from the main OmniDev-v3 project directory:
-     ```bash
-     cd ..
-     # Check for supabase/migrations/ directory
-     ```
-   - The schema includes tables for profiles, workspaces, chats, messages, and attachments
+
+   Run the migrations in your Supabase SQL Editor:
+   ```bash
+   # From project root
+   cat supabase/migrations/001_initial_schema.sql
+   cat app/supabase/migrations/20241204_extended_profiles.sql
+   ```
 
 5. **Run the development server**
    ```bash
@@ -85,164 +116,99 @@ A modern, mobile-first multimodal AI chat workspace with comprehensive haptic fe
 6. **Open your browser**
    Navigate to http://localhost:3000
 
-## 🎨 Design System
+## Database Schema
 
-### Color Palette (VASEY/AI Brand)
-- **Primary Accent**: Teal (#22A4C1)
-- **Secondary Accent**: Charcoal (#32505A)
-- **Tertiary Accent**: Medium Gray (#ABABAB)
-- **Background**: Dark Blue (#2B3E47)
-- **Temporary Mode**: Blue (#3B82F6)
+### Tables
+- `profiles` - User profiles with subscription tiers
+- `workspaces` - Project folders for organizing chats
+- `chats` - Conversation metadata with starring/pinning
+- `messages` - Chat messages with attachments and metrics
+- `attachments` - File storage metadata
 
-### Typography
-- **Font**: Inter (Variable Weight: 300-700)
-- **Scale**: xs (12px) → 4xl (36px)
-- **Line Heights**: 1.0 (none) → 2.0 (loose)
+### Row Level Security
+All tables have RLS policies ensuring users can only access their own data.
 
-### Spacing
-- **Base Unit**: 4px
-- **Scale**: 0.5 (2px) → 32 (128px)
-- **Safe Areas**: iOS notch & home indicator support
-
-### Animations
-- **Easings**: Linear, In, Out, In-Out, Bounce, Spring
-- **Durations**: 50ms (fastest) → 500ms (slowest)
-
-## 📱 Mobile-First Principles
-
-1. **Touch Targets**: Minimum 44x44px for all interactive elements
-2. **Safe Areas**: Respects iOS notch and home indicator
-3. **Haptic Feedback**: Vibration patterns for every user interaction
-4. **Swipe Gestures**: Swipeable sidebar drawer
-5. **Responsive Breakpoints**: xs (375px) → 3xl (1920px)
-
-## 🔐 Incognito Mode
-
-When incognito mode is activated:
-- **Zero Persistence**: No database writes
-- **Visual Changes**: Pure black background with ghost watermark pattern
-- **Temporary Indicator**: Blue clock icon in composer
-- **Auto-Cleanup**: Ephemeral chats deleted after 24 hours (if any slip through)
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 app/
-├── components/
-│   ├── chat/
-│   │   ├── Composer.tsx          # Floating capsule input
-│   │   ├── ContextPill.tsx       # Mode selector pills
-│   │   ├── AspectRatioSelector.tsx
-│   │   ├── AttachmentPreview.tsx
-│   │   └── UploadMenu.tsx
-│   ├── sidebar/
-│   │   ├── MobileSidebar.tsx     # Swipeable drawer
-│   │   └── SidebarContent.tsx    # Navigation internals
-│   ├── header/
-│   │   └── ModelSelector.tsx     # Model picker header
-│   └── ui/
-│       ├── avatar.tsx            # Radix Avatar
-│       └── scroll-area.tsx       # Radix ScrollArea
-├── hooks/
-│   ├── useHaptics.ts             # Haptic feedback
-│   ├── useAutoResizeTextarea.ts
-│   └── useMediaQuery.ts
-├── lib/
-│   ├── utils.ts                  # Utility functions
-│   ├── haptics/
-│   │   └── triggers.ts           # Haptic trigger map
-│   └── ai/
-│       └── models.ts             # AI model definitions
-├── types/
-│   └── index.ts                  # TypeScript types
-├── globals.css                   # Design tokens
-├── layout.tsx                    # Root layout
-├── page.tsx                      # Main chat page
-└── tailwind.config.ts            # Tailwind configuration
+├── app/
+│   ├── api/
+│   │   ├── chat/           # Chat streaming endpoint
+│   │   ├── generate-image/ # Image generation
+│   │   ├── generate-video/ # Video generation
+│   │   └── usage/          # Usage tracking API
+│   ├── chats/              # All chats page
+│   ├── help/               # Documentation wiki
+│   ├── models/             # Models directory
+│   ├── profile/            # User profile
+│   ├── settings/           # App settings
+│   ├── usage/              # Usage analytics
+│   ├── components/
+│   │   ├── chat/           # Chat components
+│   │   ├── header/         # Header components
+│   │   ├── projects/       # Project settings
+│   │   ├── sidebar/        # Sidebar components
+│   │   ├── usage/          # Usage monitor
+│   │   └── ui/             # Radix UI wrappers
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/
+│   │   ├── ai/             # AI model definitions
+│   │   ├── auth/           # Auth context
+│   │   ├── haptics/        # Haptic feedback
+│   │   └── supabase/       # Database helpers
+│   ├── stores/             # Zustand stores
+│   └── types/              # TypeScript types
+├── public/                 # Static assets
+└── supabase/              # Database migrations
 ```
 
-## 🚀 Development Workflow
+## Development
 
-1. **Start dev server**: `npm run dev`
-2. **Build for production**: `npm run build`
-3. **Start production server**: `npm start`
-4. **Lint**: `npm run lint`
+```bash
+# Start dev server
+npm run dev
 
-## 🧪 Testing
+# Build for production
+npm run build
 
-The application includes comprehensive haptic feedback testing across all interactions:
-- Button presses (light, medium, heavy)
-- Sidebar gestures (swipe start, swipe complete)
-- Mode toggles (incognito enter/exit)
-- Context pill selection
-- File uploads
-- Message actions
+# Start production server
+npm start
 
-Test on actual mobile devices to experience the full haptic feedback system.
+# Lint code
+npm run lint
+```
 
-## 📖 Usage Guide
+## Subscription Tiers
 
-### Creating a New Chat
-1. Tap the hamburger menu (mobile) or use the sidebar (desktop)
-2. Click "+ New Chat"
-3. Start typing in the floating composer
+| Feature | Free | Pro | Enterprise |
+|---------|------|-----|------------|
+| Tokens/month | 100K | 2M | 10M |
+| Images/month | 10 | 100 | 500 |
+| Videos/month | 0 | 20 | 100 |
+| Max file size | 5MB | 25MB | 100MB |
+| Models | Basic | All | All + Priority |
 
-### Selecting Context Modes
-Above the composer, tap any context pill:
-- **Thinking**: Extended reasoning
-- **Search**: Web search capabilities
-- **Deep Research**: Comprehensive research mode
-- **Image Gen**: Generate images (shows aspect ratio selector)
+## API Endpoints
 
-### Attaching Files
-1. Click the "+" button in the composer
-2. Select file type (document, image, video, audio)
-3. Choose files from your device
-4. Preview appears above the input
+- `POST /api/chat` - Stream chat responses
+- `POST /api/generate-image` - Generate images
+- `POST /api/generate-video` - Generate videos
+- `GET/POST /api/usage` - Usage tracking
 
-### Activating Incognito Mode
-- Tap the Clock icon in the composer **OR**
-- Tap the Ghost icon in the header
-
-### Voice Input
-1. Tap the microphone icon
-2. Speak your message
-3. Tap again to stop recording
-4. Transcription appears in the input
-
-## 🔧 Configuration
-
-### Adding New LLM Providers
-Edit `lib/ai/models.ts` to add new models to the `AI_MODELS` object.
-
-### Customizing Haptic Patterns
-Edit `lib/haptics/triggers.ts` to adjust vibration patterns for different interactions.
-
-### Modifying Design Tokens
-All design tokens are in `globals.css` under CSS custom properties.
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read the contributing guidelines before submitting pull requests.
 
-## 📧 Support
+## License
 
-For issues and questions:
+MIT License - see LICENSE file for details
+
+## Support
+
 - GitHub Issues: https://github.com/SeanVasey/OmniDev-v3/issues
-- Email: sean@vasey.audio
-
-## 🙏 Acknowledgments
-
-- Design inspiration from ChatGPT, Claude, and Qwen
-- VASEY/AI brand colors
-- Inter font by Rasmus Andersson
-- Radix UI for accessible components
-- Vercel for the AI SDK
+- Email: support@omnidev.ai
 
 ---
 
-**Built with ❤️ for the developer community**
+**Built with love for the developer community**

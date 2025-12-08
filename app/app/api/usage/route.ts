@@ -1,8 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 import type { UsageLog, UsageSummary, SubscriptionTier } from '@/types';
 import { TIER_LIMITS, MODEL_PRICING } from '@/types';
 
-export const runtime = 'edge';
+// Use Node.js runtime for server-side auth (not edge)
+export const runtime = 'nodejs';
+
+// Admin user IDs - in production, this would be fetched from database
+const ADMIN_USER_IDS = new Set<string>([
+  // Add admin user IDs here or check a role in the profiles table
+]);
+
+// Helper to create authenticated Supabase client
+async function createAuthenticatedClient() {
+  const cookieStore = await cookies();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+}
+
+// Helper to get authenticated user
+async function getAuthenticatedUser(supabase: any) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    return null;
+  }
+  return user;
+}
+
+// Helper to check if user is admin
+async function isAdmin(supabase: any, userId: string): Promise<boolean> {
+  // Check hardcoded admin list
+  if (ADMIN_USER_IDS.has(userId)) {
+    return true;
+  }
+
+  // Check profiles table for admin role
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+
+  return profile?.role === 'admin';
+}
 
 // In-memory storage for demo purposes (would be database in production)
 // This simulates user-specific usage data
@@ -103,15 +159,34 @@ function calculateSummary(
   };
 }
 
-// GET - Fetch usage summary
+// GET - Fetch usage summary (authenticated)
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId') || 'anonymous';
-    const period = (searchParams.get('period') || 'month') as 'day' | 'week' | 'month' | 'all';
-    const tier = (searchParams.get('tier') || 'free') as SubscriptionTier;
+    // Authenticate user
+    const supabase = await createAuthenticatedClient();
+    const user = await getAuthenticatedUser(supabase);
 
-    const logs = getOrCreateUserLogs(userId);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(req.url);
+    const period = (searchParams.get('period') || 'month') as 'day' | 'week' | 'month' | 'all';
+
+    // Get tier from user profile, fallback to free
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single();
+
+    const tier = (profile?.subscription_tier || 'free') as SubscriptionTier;
+
+    // Use authenticated user's ID - never from client input
+    const logs = getOrCreateUserLogs(user.id);
     const summary = calculateSummary(logs, period, tier);
 
     return NextResponse.json({
@@ -119,6 +194,7 @@ export async function GET(req: NextRequest) {
       data: {
         summary,
         recentLogs: logs.slice(0, 20),
+        userId: user.id, // Return for client reference
       },
     });
   } catch (error) {
@@ -130,12 +206,22 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST - Log new usage
+// POST - Log new usage (authenticated)
 export async function POST(req: NextRequest) {
   try {
+    // Authenticate user
+    const supabase = await createAuthenticatedClient();
+    const user = await getAuthenticatedUser(supabase);
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const {
-      userId = 'anonymous',
       modelId,
       provider,
       type = 'chat',
@@ -144,6 +230,14 @@ export async function POST(req: NextRequest) {
       latencyMs = 0,
       contextMode,
     } = body;
+
+    // Validate required fields
+    if (!modelId) {
+      return NextResponse.json(
+        { success: false, error: 'modelId is required' },
+        { status: 400 }
+      );
+    }
 
     // Calculate cost
     const pricing = MODEL_PRICING[modelId];
@@ -162,7 +256,7 @@ export async function POST(req: NextRequest) {
 
     const log: UsageLog = {
       id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      user_id: userId,
+      user_id: user.id, // Always use authenticated user's ID
       model_id: modelId,
       provider: provider || 'unknown',
       type,
@@ -174,7 +268,7 @@ export async function POST(req: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    const logs = getOrCreateUserLogs(userId);
+    const logs = getOrCreateUserLogs(user.id);
     logs.unshift(log);
 
     // Keep only last 1000 logs per user
@@ -195,21 +289,70 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE - Reset usage (for testing/admin)
+// DELETE - Reset usage (admin only with confirmation)
 export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
+    // Authenticate user
+    const supabase = await createAuthenticatedClient();
+    const user = await getAuthenticatedUser(supabase);
 
-    if (userId) {
-      usageData.delete(userId);
-    } else {
-      usageData.clear();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      );
     }
+
+    const { searchParams } = new URL(req.url);
+    const targetUserId = searchParams.get('userId');
+    const confirmDelete = searchParams.get('confirm') === 'true';
+
+    // Check if user is admin for bulk operations
+    const userIsAdmin = await isAdmin(supabase, user.id);
+
+    // Users can only delete their own data
+    // Admins can delete any user's data or all data
+    if (targetUserId && targetUserId !== user.id && !userIsAdmin) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden - Cannot delete other users\' data' },
+        { status: 403 }
+      );
+    }
+
+    // Bulk delete (all users) requires admin and confirmation
+    if (!targetUserId) {
+      if (!userIsAdmin) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden - Admin access required for bulk deletion' },
+          { status: 403 }
+        );
+      }
+
+      if (!confirmDelete) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Confirmation required - Add ?confirm=true to delete all usage data',
+            requiresConfirmation: true
+          },
+          { status: 400 }
+        );
+      }
+
+      usageData.clear();
+      return NextResponse.json({
+        success: true,
+        message: 'All usage data cleared (admin action)',
+      });
+    }
+
+    // Delete specific user's data
+    const userIdToDelete = targetUserId || user.id;
+    usageData.delete(userIdToDelete);
 
     return NextResponse.json({
       success: true,
-      message: userId ? `Usage data cleared for ${userId}` : 'All usage data cleared',
+      message: `Usage data cleared for user ${userIdToDelete === user.id ? '(self)' : userIdToDelete}`,
     });
   } catch (error) {
     console.error('Usage API DELETE error:', error);

@@ -3,12 +3,16 @@ import { persist } from 'zustand/middleware';
 import type { UsageSummary, UsageLog, SubscriptionTier, TierLimits } from '@/types';
 import { TIER_LIMITS, MODEL_PRICING } from '@/types';
 
+type TimePeriod = 'day' | 'week' | 'month' | 'all';
+
 interface UsageState {
   // Current usage data
   currentUsage: UsageSummary | null;
   usageLogs: UsageLog[];
   isLoading: boolean;
   lastFetched: string | null;
+  currentPeriod: TimePeriod;
+  error: string | null;
 
   // UI preferences
   showUsageMonitor: boolean;
@@ -22,12 +26,15 @@ interface UsageState {
   setCurrentUsage: (usage: UsageSummary) => void;
   addUsageLog: (log: UsageLog) => void;
   setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
   toggleUsageMonitor: () => void;
   setMonitorPosition: (position: 'header' | 'sidebar' | 'floating') => void;
   setTier: (tier: SubscriptionTier) => void;
+  setPeriod: (period: TimePeriod) => void;
   calculateCost: (modelId: string, inputTokens: number, outputTokens: number) => number;
   checkQuota: (type: 'tokens' | 'images' | 'videos', amount?: number) => { allowed: boolean; remaining: number; limit: number };
   resetUsage: () => void;
+  fetchUsage: (period?: TimePeriod) => Promise<void>;
 }
 
 const getDefaultUsage = (): UsageSummary => ({
@@ -54,6 +61,8 @@ export const useUsageStore = create<UsageState>()(
       usageLogs: [],
       isLoading: false,
       lastFetched: null,
+      currentPeriod: 'month',
+      error: null,
       showUsageMonitor: true,
       monitorPosition: 'header',
       currentTier: 'free',
@@ -63,6 +72,7 @@ export const useUsageStore = create<UsageState>()(
         set({
           currentUsage: usage,
           lastFetched: new Date().toISOString(),
+          error: null,
         }),
 
       addUsageLog: (log) =>
@@ -135,10 +145,14 @@ export const useUsageStore = create<UsageState>()(
 
       setLoading: (loading) => set({ isLoading: loading }),
 
+      setError: (error) => set({ error }),
+
       toggleUsageMonitor: () =>
         set((state) => ({ showUsageMonitor: !state.showUsageMonitor })),
 
       setMonitorPosition: (position) => set({ monitorPosition: position }),
+
+      setPeriod: (period) => set({ currentPeriod: period }),
 
       setTier: (tier) =>
         set((state) => {
@@ -207,7 +221,51 @@ export const useUsageStore = create<UsageState>()(
             videosLimit: state.tierLimits.videosPerMonth,
           },
           usageLogs: [],
+          error: null,
         })),
+
+      fetchUsage: async (period?: TimePeriod) => {
+        const state = get();
+        const periodToFetch = period || state.currentPeriod;
+
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await fetch(`/api/usage?period=${periodToFetch}`);
+          const result = await response.json();
+
+          if (!response.ok) {
+            // Handle 401 Unauthorized gracefully
+            if (response.status === 401) {
+              set({
+                isLoading: false,
+                error: 'Please sign in to view usage data',
+              });
+              return;
+            }
+            throw new Error(result.error || 'Failed to fetch usage data');
+          }
+
+          if (result.success && result.data) {
+            set({
+              currentUsage: result.data.summary,
+              usageLogs: result.data.recentLogs || [],
+              lastFetched: new Date().toISOString(),
+              currentPeriod: periodToFetch,
+              isLoading: false,
+              error: null,
+            });
+          } else {
+            throw new Error(result.error || 'Invalid response');
+          }
+        } catch (error) {
+          console.error('Failed to fetch usage:', error);
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Failed to fetch usage data',
+          });
+        }
+      },
     }),
     {
       name: 'omnidev-usage-storage',
@@ -217,6 +275,7 @@ export const useUsageStore = create<UsageState>()(
         showUsageMonitor: state.showUsageMonitor,
         monitorPosition: state.monitorPosition,
         currentTier: state.currentTier,
+        currentPeriod: state.currentPeriod,
         lastFetched: state.lastFetched,
       }),
     }
