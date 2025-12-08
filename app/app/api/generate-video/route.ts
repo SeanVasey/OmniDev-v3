@@ -29,9 +29,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
-    });
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'OpenAI API key not configured' },
+        { status: 500 }
+      );
+    }
+
+    const openai = new OpenAI({ apiKey });
 
     // Note: This is a placeholder for Sora API integration
     // The actual Sora API endpoints may differ when officially released
