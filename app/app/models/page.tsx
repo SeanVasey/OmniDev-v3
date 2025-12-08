@@ -94,6 +94,18 @@ const MODEL_USE_CASES: Record<string, { bestFor: string[]; tips: string[] }> = {
     bestFor: ['General conversation', 'Quick Q&A', 'Brainstorming', 'Creative writing'],
     tips: ['Optimized for conversational flow', 'Best default model for most tasks', 'Fast and efficient responses'],
   },
+  'gpt-5.1-pro': {
+    bestFor: ['Enterprise tasks', 'Advanced research', 'Complex projects', 'Maximum capability'],
+    tips: ['512K context window', 'Best for mission-critical tasks', 'Supports thinking and research modes'],
+  },
+  'gpt-5.1-nano': {
+    bestFor: ['Quick responses', 'Simple queries', 'Cost-effective tasks', 'High-volume processing'],
+    tips: ['Fastest GPT-5.1 variant', 'Lowest cost per token', 'Good for simple automations'],
+  },
+  'gpt-5.1-mini': {
+    bestFor: ['Balanced tasks', 'Moderate complexity', 'General purpose', 'Interactive apps'],
+    tips: ['Good balance of speed and capability', '128K context', 'Supports thinking mode'],
+  },
   'gpt-5.1-codex': {
     bestFor: ['Code generation', 'Debugging', 'Code review', 'Technical documentation'],
     tips: ['Specialized for programming tasks', 'Supports all major languages', 'Use for refactoring and optimization'],
@@ -105,14 +117,6 @@ const MODEL_USE_CASES: Record<string, { bestFor: string[]; tips: string[] }> = {
   'gpt-5.1-codex-max': {
     bestFor: ['Large codebase analysis', 'Complex refactoring', 'Architecture design'],
     tips: ['Maximum context for large projects', 'Use for full-file or multi-file tasks', 'Best for enterprise codebases'],
-  },
-  'gpt-5': {
-    bestFor: ['General AI tasks', 'Content creation', 'Analysis'],
-    tips: ['Reliable all-around model', 'Good balance of speed and capability'],
-  },
-  'gpt-5-pro': {
-    bestFor: ['Enterprise tasks', 'Advanced research', 'Complex projects'],
-    tips: ['Maximum capability from OpenAI', 'Use for mission-critical tasks'],
   },
   'claude-4.5-opus': {
     bestFor: ['Nuanced writing', 'Ethical analysis', 'Long documents', 'Creative tasks'],
