@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -10,13 +10,12 @@ import {
   Image as ImageIcon,
   Video,
   Clock,
-  Calendar,
   Crown,
   Settings,
   RefreshCw,
   Download,
   BarChart3,
-  PieChart,
+  AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useUsageStore } from '@/stores/usageStore';
@@ -36,16 +35,33 @@ export default function UsagePage() {
     toggleUsageMonitor,
     setMonitorPosition,
     monitorPosition,
+    currentPeriod,
+    fetchUsage,
+    isLoading,
+    error,
   } = useUsageStore();
 
-  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('month');
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  // Fetch usage data when component mounts or period changes
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      fetchUsage(currentPeriod);
+    }
+  }, [authLoading, isAuthenticated, currentPeriod, fetchUsage]);
 
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/login');
     }
   }, [authLoading, isAuthenticated, router]);
+
+  const handlePeriodChange = useCallback((period: TimePeriod) => {
+    fetchUsage(period);
+  }, [fetchUsage]);
+
+  const handleRefresh = useCallback(() => {
+    fetchUsage(currentPeriod);
+  }, [fetchUsage, currentPeriod]);
 
   const usage = currentUsage || {
     tokensUsed: 0,
@@ -71,13 +87,6 @@ export default function UsagePage() {
 
   const formatCost = (cost: number) => {
     return cost < 0.01 ? '<$0.01' : `$${cost.toFixed(2)}`;
-  };
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    // Simulate refresh - in production, this would fetch from API
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsRefreshing(false);
   };
 
   const StatCard = ({
@@ -144,10 +153,10 @@ export default function UsagePage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleRefresh}
-                disabled={isRefreshing}
+                disabled={isLoading}
                 className="p-2 rounded-xl hover:bg-[var(--bg-elevated)] transition-colors disabled:opacity-50"
               >
-                <RefreshCw className={cn('w-5 h-5 text-[var(--text-muted)]', isRefreshing && 'animate-spin')} />
+                <RefreshCw className={cn('w-5 h-5 text-[var(--text-muted)]', isLoading && 'animate-spin')} />
               </button>
               <button className="p-2 rounded-xl hover:bg-[var(--bg-elevated)] transition-colors">
                 <Download className="w-5 h-5 text-[var(--text-muted)]" />
@@ -160,12 +169,14 @@ export default function UsagePage() {
             {(['day', 'week', 'month', 'all'] as TimePeriod[]).map((period) => (
               <button
                 key={period}
-                onClick={() => setSelectedPeriod(period)}
+                onClick={() => handlePeriodChange(period)}
+                disabled={isLoading}
                 className={cn(
                   'px-4 py-2 rounded-xl text-sm font-medium transition-colors capitalize',
-                  selectedPeriod === period
+                  currentPeriod === period
                     ? 'bg-[var(--accent-primary)] text-white'
-                    : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-muted)]'
+                    : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-muted)]',
+                  isLoading && 'opacity-50 cursor-not-allowed'
                 )}
               >
                 {period === 'all' ? 'All Time' : `This ${period}`}
@@ -177,6 +188,18 @@ export default function UsagePage() {
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Error Banner */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 rounded-2xl bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 flex items-center gap-3"
+          >
+            <AlertCircle className="w-5 h-5 text-[var(--color-error)]" />
+            <p className="text-sm text-[var(--color-error)]">{error}</p>
+          </motion.div>
+        )}
+
         {/* Plan Banner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -219,7 +242,12 @@ export default function UsagePage() {
           className="p-6 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)]"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">Token Usage</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+              Token Usage
+              <span className="text-sm font-normal text-[var(--text-muted)] ml-2 capitalize">
+                ({currentPeriod === 'all' ? 'All Time' : `This ${currentPeriod}`})
+              </span>
+            </h2>
             <span className={cn(
               'px-3 py-1 rounded-full text-xs font-medium',
               isOverLimit
@@ -301,7 +329,7 @@ export default function UsagePage() {
 
           {usage.topModels.length > 0 ? (
             <div className="space-y-3">
-              {usage.topModels.map((model, index) => {
+              {usage.topModels.map((model) => {
                 const percentage = (model.tokens / usage.tokensUsed) * 100 || 0;
                 return (
                   <div key={model.modelId} className="space-y-1.5">
