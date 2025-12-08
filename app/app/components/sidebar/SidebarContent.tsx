@@ -15,6 +15,8 @@ import {
   Image as ImageIcon,
   User,
   Activity,
+  Brain,
+  HelpCircle,
 } from 'lucide-react';
 import { useHaptics } from '@/hooks/useHaptics';
 import { HAPTIC_TRIGGERS } from '@/lib/haptics/triggers';
@@ -334,6 +336,48 @@ export function SidebarContent({
               <span className="flex items-center gap-3">
                 <Activity className="w-5 h-5" />
                 <span className="text-sm">Usage & Billing</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
+            </button>
+            <button
+              onClick={() => {
+                trigger(HAPTIC_TRIGGERS.button.secondary);
+                router.push('/models');
+              }}
+              className="
+                w-full flex items-center justify-between
+                px-3 py-2.5
+                rounded-lg
+                text-[var(--text-secondary)]
+                hover:bg-[var(--bg-elevated)]
+                hover:text-[var(--text-primary)]
+                transition-colors
+              "
+            >
+              <span className="flex items-center gap-3">
+                <Brain className="w-5 h-5" />
+                <span className="text-sm">AI Models</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
+            </button>
+            <button
+              onClick={() => {
+                trigger(HAPTIC_TRIGGERS.button.secondary);
+                router.push('/help');
+              }}
+              className="
+                w-full flex items-center justify-between
+                px-3 py-2.5
+                rounded-lg
+                text-[var(--text-secondary)]
+                hover:bg-[var(--bg-elevated)]
+                hover:text-[var(--text-primary)]
+                transition-colors
+              "
+            >
+              <span className="flex items-center gap-3">
+                <HelpCircle className="w-5 h-5" />
+                <span className="text-sm">Help & Docs</span>
               </span>
               <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
             </button>
