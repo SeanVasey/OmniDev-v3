@@ -45,7 +45,7 @@ export default function SettingsPage() {
   const { setTheme } = useUIStore();
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [_activeSection] = useState<string | null>(null);
+  // Active section state removed - not currently used but may be needed for future navigation
   const [preferences, setPreferences] = useState<PreferencesFormData>({
     theme: 'dark',
     hapticsEnabled: true,
@@ -259,9 +259,10 @@ export default function SettingsPage() {
           >
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-primary-hover)] flex items-center justify-center shadow-lg">
               {user?.avatar_url ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- Dynamic user avatar from OAuth providers */
                 <img
                   src={user.avatar_url}
-                  alt={user.full_name}
+                  alt={user.full_name || 'User avatar'}
                   className="w-full h-full rounded-2xl object-cover"
                 />
               ) : (
