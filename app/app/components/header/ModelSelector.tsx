@@ -20,15 +20,15 @@ interface ModelSelectorProps {
 }
 
 export function ModelSelector({
-  currentModel,
+  currentModel: _currentModel,
   isIncognito,
-  onModelChange,
+  onModelChange: _onModelChange,
   onIncognitoToggle,
   onMenuOpen,
 }: ModelSelectorProps) {
   const router = useRouter();
   const { trigger } = useHaptics();
-  const { user, isAuthenticated, isGuest, signOut } = useAuth();
+  const { user, isAuthenticated, signOut } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 

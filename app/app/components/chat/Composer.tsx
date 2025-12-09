@@ -19,7 +19,6 @@ import {
   Image as ImageIcon,
   Video,
   Search,
-  Zap,
 } from 'lucide-react';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useVoiceRecording } from '@/hooks/useVoiceRecording';

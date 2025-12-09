@@ -221,6 +221,7 @@ export function logConfigurationStatus(): void {
   const validation = validateMinimumConfig();
   const configured = getConfiguredProviders();
 
+  /* eslint-disable no-console */
   console.log('\n🔧 OmniDev Configuration Status:');
   console.log('================================');
 
@@ -258,4 +259,5 @@ export function logConfigurationStatus(): void {
   }
 
   console.log('================================\n');
+  /* eslint-enable no-console */
 }

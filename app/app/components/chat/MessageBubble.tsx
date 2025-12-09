@@ -207,7 +207,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                   rehypePlugins={[rehypeHighlight]}
                   components={{
                     // Custom code block renderer
-                    code({ node, className, children, ...props }) {
+                    code({ className, children }) {
                       const match = /language-(\w+)/.exec(className || '');
                       const isInline = !match && !className;
                       const codeContent = String(children).replace(/\n$/, '');

@@ -121,6 +121,7 @@ export function useHaptics(): UseHapticsReturn {
     try {
       navigator.vibrate(config.pattern);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.debug('Haptic feedback failed:', error);
     }
   }, [isSupported, isEnabled]);

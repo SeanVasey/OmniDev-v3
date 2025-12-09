@@ -42,10 +42,10 @@ interface PreferencesFormData {
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading, signOut } = useAuth();
-  const { theme, setTheme } = useUIStore();
+  const { setTheme } = useUIStore();
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [_activeSection] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<PreferencesFormData>({
     theme: 'dark',
     hapticsEnabled: true,
