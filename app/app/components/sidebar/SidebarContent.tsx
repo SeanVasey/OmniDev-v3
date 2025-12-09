@@ -27,7 +27,7 @@ import { MediaLibrary } from '@/components/sidebar/MediaLibrary';
 import { ProjectSettingsDialog } from '@/components/projects/ProjectSettingsDialog';
 import { UsageMonitor } from '@/components/usage/UsageMonitor';
 import { cn } from '@/lib/utils';
-import type { Project, Chat, User as UserType, ProjectColor, ProjectIcon } from '@/types';
+import type { Project, Chat, User as UserType, ProjectColor } from '@/types';
 
 // Icon mapping for projects
 const PROJECT_ICONS: Record<string, any> = {

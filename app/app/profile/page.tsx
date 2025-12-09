@@ -19,10 +19,6 @@ import {
   Shield,
   Sparkles,
   LogOut,
-  Settings,
-  Bell,
-  Moon,
-  Sun,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { createClient } from '@/lib/supabase/client';

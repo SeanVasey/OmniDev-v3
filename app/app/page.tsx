@@ -44,6 +44,8 @@ const mockProjects: Project[] = [
   },
 ];
 
+// Mock data for UI demonstration
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockChats: Chat[] = [
   {
     id: '1',
@@ -82,7 +84,7 @@ export default function HomePage() {
 
   const { user, userId, isGuest } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
-  const { currentChatId, chats, setCurrentChat, addMessage } = useChatStore();
+  const { currentChatId, chats: _chats, setCurrentChat, addMessage } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
   const { upload: uploadFiles, isUploading } = useFileUpload();
   const { generateImage, isGenerating } = useImageGeneration();
@@ -302,6 +304,7 @@ export default function HomePage() {
   };
 
   const handleSelectProject = (projectId: string) => {
+    // eslint-disable-next-line no-console
     console.log('Select project:', projectId);
     setSidebarOpen(false);
   };

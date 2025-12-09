@@ -25,6 +25,7 @@ export function ChatHistory({ userId, currentChatId, onSelectChat, onNewChat }: 
 
   useEffect(() => {
     loadChats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const loadChats = async () => {

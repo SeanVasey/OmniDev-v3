@@ -37,6 +37,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Note: OpenAI client initialized for future Sora API integration
+    // Currently returning mock response until Sora API is officially released
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const openai = new OpenAI({ apiKey });
 
     // Note: This is a placeholder for Sora API integration
@@ -50,6 +53,7 @@ export async function POST(req: NextRequest) {
       '1:1': { width: 1080, height: 1080 },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const resolution = resolutionMap[aspectRatio] || resolutionMap['16:9'];
 
     // Placeholder for actual Sora API call

@@ -6,6 +6,7 @@ import type { Database } from '@/types/database.types';
 
 type DbChat = Database['public']['Tables']['chats']['Row'];
 type DbMessage = Database['public']['Tables']['messages']['Row'];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type DbChatInsert = Database['public']['Tables']['chats']['Insert'];
 type DbMessageInsert = Database['public']['Tables']['messages']['Insert'];
 
@@ -279,6 +280,8 @@ export async function createWorkspace(
   }
 ): Promise<Project | null> {
   if (!isSupabaseConfigured()) {
+    // Development logging
+    // eslint-disable-next-line no-console
     console.log('Supabase not configured. Cannot create workspace.');
     return null;
   }
