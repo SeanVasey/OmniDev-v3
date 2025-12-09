@@ -84,7 +84,7 @@ export default function HomePage() {
 
   const { user, userId, isGuest } = useAuth();
   const { isIncognitoMode, isSidebarOpen, setSidebarOpen, toggleIncognitoMode } = useUIStore();
-  const { currentChatId, chats: _chats, setCurrentChat, addMessage } = useChatStore();
+  const { currentChatId, setCurrentChat, addMessage } = useChatStore();
   const { createNewChat, saveMessage, loadChatMessages } = useDatabaseSync();
   const { upload: uploadFiles, isUploading } = useFileUpload();
   const { generateImage, isGenerating } = useImageGeneration();

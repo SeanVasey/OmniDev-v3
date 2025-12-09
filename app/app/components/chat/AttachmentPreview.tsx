@@ -36,6 +36,7 @@ export function AttachmentPreview({ file, onRemove }: AttachmentPreviewProps) {
       "
     >
       {previewUrl ? (
+        /* eslint-disable-next-line @next/next/no-img-element -- Using img for blob URLs from file uploads */
         <img
           src={previewUrl}
           alt={file.name}

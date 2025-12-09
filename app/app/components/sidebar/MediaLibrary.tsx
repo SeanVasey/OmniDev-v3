@@ -98,6 +98,7 @@ export function MediaLibrary({ onSelectChat }: MediaLibraryProps) {
               )}
             >
               {item.type === 'image' ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- Dynamic external URLs from AI generation */
                 <img
                   src={item.url}
                   alt="Generated"
@@ -148,6 +149,7 @@ export function MediaLibrary({ onSelectChat }: MediaLibraryProps) {
               onClick={(e) => e.stopPropagation()}
             >
               {selectedItem.type === 'image' ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- Dynamic external URLs from AI generation */
                 <img
                   src={selectedItem.url}
                   alt="Generated"
