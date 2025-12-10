@@ -70,6 +70,11 @@ export default function ProfilePage() {
       setIsLoading(true);
       try {
         const supabase = createClient();
+        if (!supabase) {
+          setError('Supabase client not available');
+          return;
+        }
+
         const result = await supabase
           .from('profiles')
           .select('*')
@@ -151,6 +156,10 @@ export default function ProfilePage() {
 
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError('Supabase client not available');
+        return;
+      }
 
       // Upload avatar if changed
       let avatarUrl = profile?.avatar_url;

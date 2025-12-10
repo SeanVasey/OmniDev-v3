@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/database';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { User as SupabaseUser, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import type { User, BillingAddress } from '@/types';
 
 interface SignUpData {
@@ -83,9 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const supabase = createClient();
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
 
     // Check active sessions
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(toAppUser(session?.user ?? null));
       setIsLoading(false);
     });
@@ -93,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setUser(toAppUser(session?.user ?? null));
     });
 
@@ -107,6 +111,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const supabase = createClient();
+    if (!supabase) {
+      console.warn('Supabase client not available');
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -125,6 +134,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const supabase = createClient();
+    if (!supabase) {
+      return { error: 'Supabase client not available' };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -143,6 +156,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const supabase = createClient();
+    if (!supabase) {
+      return { error: 'Supabase client not available' };
+    }
 
     // Sign up the user
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
@@ -203,6 +219,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isSupabaseConfigured()) return;
 
     const supabase = createClient();
+    if (!supabase) return;
+
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
       // Fetch full profile from database - use type assertion for extended schema
@@ -237,6 +255,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isSupabaseConfigured()) return;
 
     const supabase = createClient();
+    if (!supabase) return;
+
     await supabase.auth.signOut();
     setUser(null);
   };

@@ -142,6 +142,11 @@ export default function SignupPage() {
 
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError('Supabase client not available');
+        setIsLoading(false);
+        return;
+      }
 
       // Sign up the user
       const { data, error: signUpError } = await supabase.auth.signUp({
@@ -223,6 +228,12 @@ export default function SignupPage() {
 
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError('Supabase client not available');
+        setIsGoogleLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

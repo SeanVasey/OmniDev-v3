@@ -29,6 +29,11 @@ export default function LoginPage() {
 
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError('Supabase client not available');
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -58,6 +63,12 @@ export default function LoginPage() {
 
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError('Supabase client not available');
+        setIsGoogleLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

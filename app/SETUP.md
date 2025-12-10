@@ -18,11 +18,11 @@ cp .env.local.example .env.local
 Edit `.env.local` and add at minimum:
 
 ```env
-# Required for AI features
-OPENAI_API_KEY=sk-proj-your-key-here
+# Required for AI features (get your key from platform.openai.com)
+OPENAI_API_KEY=your-openai-api-key-here
 
-# Optional: Add more providers as needed
-ANTHROPIC_API_KEY=sk-ant-your-key-here
+# Optional: Add more providers as needed (get from console.anthropic.com)
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
 ```
 
 ### 3. Run Development Server
@@ -81,17 +81,17 @@ cp .env.local.example .env.local
 **Minimum Configuration (OpenAI only):**
 
 ```env
-OPENAI_API_KEY=sk-proj-your-openai-key
+OPENAI_API_KEY=your-openai-api-key-here
 ```
 
 **Full Configuration (All Providers):**
 
 ```env
-# OpenAI (GPT-4o, GPT-4 Turbo)
-OPENAI_API_KEY=sk-proj-...
+# OpenAI (GPT-4o, GPT-4 Turbo) - get from platform.openai.com
+OPENAI_API_KEY=your-openai-api-key-here
 
-# Anthropic (Claude 3.5 Sonnet)
-ANTHROPIC_API_KEY=sk-ant-...
+# Anthropic (Claude 3.5 Sonnet) - get from console.anthropic.com
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
 
 # Google (Gemini - Coming Soon)
 GOOGLE_API_KEY=...
@@ -102,8 +102,8 @@ XAI_API_KEY=...
 # Mistral AI (Coming Soon)
 MISTRAL_API_KEY=...
 
-# Perplexity (Coming Soon)
-PERPLEXITY_API_KEY=pplx-...
+# Perplexity (Coming Soon) - get from perplexity.ai/settings/api
+PERPLEXITY_API_KEY=your-perplexity-api-key-here
 
 # Together AI for Meta LLaMA (Coming Soon)
 TOGETHER_API_KEY=...

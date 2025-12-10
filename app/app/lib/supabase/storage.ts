@@ -36,6 +36,7 @@ export async function uploadFile(
     }
 
     const supabase = createClient();
+    if (!supabase) return null;
 
     // Generate unique file path
     const timestamp = Date.now();
@@ -65,7 +66,6 @@ export async function uploadFile(
     // Save attachment metadata to database
     const { data: attachmentData, error: attachmentError } = await supabase
       .from('attachments')
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
       .insert({
         user_id: userId,
         message_id: messageId || null,
@@ -74,7 +74,7 @@ export async function uploadFile(
         file_type: file.type,
         file_size: file.size,
         public_url: publicUrl,
-      })
+      } as any)
       .select()
       .single();
 
@@ -85,21 +85,16 @@ export async function uploadFile(
       return null;
     }
 
+    // Type assertion for attachment data
+    const attachment = attachmentData as unknown as UploadedFile;
     return {
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      id: attachmentData.id,
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      storage_path: attachmentData.storage_path,
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      file_name: attachmentData.file_name,
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      file_type: attachmentData.file_type,
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      file_size: attachmentData.file_size,
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      public_url: attachmentData.public_url,
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      created_at: attachmentData.created_at,
+      id: attachment.id,
+      storage_path: attachment.storage_path,
+      file_name: attachment.file_name,
+      file_type: attachment.file_type,
+      file_size: attachment.file_size,
+      public_url: attachment.public_url,
+      created_at: attachment.created_at,
     };
   } catch (error) {
     console.error('Exception uploading file:', error);
@@ -130,6 +125,7 @@ export async function deleteFile(attachmentId: string, storagePath: string): Pro
 
   try {
     const supabase = createClient();
+    if (!supabase) return false;
 
     // Delete from storage
     const { error: storageError } = await supabase.storage
@@ -169,6 +165,8 @@ export async function getFileDownloadUrl(
 
   try {
     const supabase = createClient();
+    if (!supabase) return null;
+
     const { data, error } = await supabase.storage
       .from(STORAGE_BUCKET)
       .createSignedUrl(storagePath, expiresIn);

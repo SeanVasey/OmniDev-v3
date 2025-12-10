@@ -1,18 +1,20 @@
 'use client';
 
-import { createClient } from './client';
+import { createClient, isSupabaseConfigured } from './client';
 import type { Chat, Message, ContextMode, AspectRatio, Project } from '@/types';
 import type { Database } from '@/types/database.types';
 
+// Re-export for convenience
+export { isSupabaseConfigured };
+
 type DbChat = Database['public']['Tables']['chats']['Row'];
 type DbMessage = Database['public']['Tables']['messages']['Row'];
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type DbChatInsert = Database['public']['Tables']['chats']['Insert'];
 type DbMessageInsert = Database['public']['Tables']['messages']['Insert'];
 
 /**
  * Database helper functions for Supabase operations
- * All functions handle errors gracefully and return null on failure
+ * All functions handle errors gracefully and return null/empty on failure
+ * When Supabase is not configured, functions return gracefully without errors
  */
 
 // ============================================================================
@@ -25,8 +27,13 @@ export async function createChat(
   title: string = 'New Chat',
   contextMode: string | null = null
 ): Promise<Chat | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return null;
 
     const chatData = {
       user_id: userId,
@@ -62,8 +69,14 @@ export async function createChat(
 }
 
 export async function getChatById(chatId: string): Promise<Chat | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return null;
+
     const { data, error } = await supabase.from('chats').select('*').eq('id', chatId).single();
 
     if (error) {
@@ -79,8 +92,14 @@ export async function getChatById(chatId: string): Promise<Chat | null> {
 }
 
 export async function getUserChats(userId: string, includeArchived = false): Promise<Chat[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return [];
+
     let query = supabase
       .from('chats')
       .select('*')
@@ -107,8 +126,13 @@ export async function getUserChats(userId: string, includeArchived = false): Pro
 }
 
 export async function updateChat(chatId: string, updates: Partial<Chat>): Promise<Chat | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return null;
 
     const updateData: Record<string, any> = {
       updated_at: new Date().toISOString(),
@@ -120,9 +144,7 @@ export async function updateChat(chatId: string, updates: Partial<Chat>): Promis
     if (updates.is_starred !== undefined) updateData.is_starred = updates.is_starred;
     if (updates.context_mode !== undefined) updateData.context_mode = updates.context_mode;
 
-    const { data, error } = await supabase
-      .from('chats')
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
+    const { data, error } = await (supabase.from('chats') as any)
       .update(updateData)
       .eq('id', chatId)
       .select()
@@ -141,8 +163,13 @@ export async function updateChat(chatId: string, updates: Partial<Chat>): Promis
 }
 
 export async function deleteChat(chatId: string): Promise<boolean> {
+  if (!isSupabaseConfigured()) {
+    return false;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return false;
 
     // Delete all messages first (cascade should handle this, but being explicit)
     await supabase.from('messages').delete().eq('chat_id', chatId);
@@ -172,8 +199,13 @@ export async function createMessage(
   content: string,
   attachments: any[] = []
 ): Promise<Message | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return null;
 
     const messageData: DbMessageInsert = {
       chat_id: chatId,
@@ -182,8 +214,11 @@ export async function createMessage(
       attachments: attachments.length > 0 ? JSON.parse(JSON.stringify(attachments)) : null,
     };
 
-    // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-    const { data, error } = await supabase.from('messages').insert(messageData).select().single();
+    const { data, error } = await supabase
+      .from('messages')
+      .insert(messageData as any)
+      .select()
+      .single();
 
     if (error) {
       console.error('Error creating message:', error);
@@ -191,7 +226,7 @@ export async function createMessage(
     }
 
     // Update chat's updated_at timestamp
-    // @ts-expect-error - Supabase type mismatch after v0.8.0 update
+    // @ts-expect-error - Supabase types don't properly handle dynamic updates
     await supabase.from('chats').update({ updated_at: new Date().toISOString() }).eq('id', chatId);
 
     return dbMessageToMessage(data);
@@ -202,8 +237,14 @@ export async function createMessage(
 }
 
 export async function getChatMessages(chatId: string): Promise<Message[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return [];
+
     const { data, error } = await supabase
       .from('messages')
       .select('*')
@@ -223,12 +264,15 @@ export async function getChatMessages(chatId: string): Promise<Message[]> {
 }
 
 export async function updateMessage(messageId: string, content: string): Promise<Message | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return null;
 
-    const { data, error } = await supabase
-      .from('messages')
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
+    const { data, error } = await (supabase.from('messages') as any)
       .update({ content })
       .eq('id', messageId)
       .select()
@@ -247,8 +291,14 @@ export async function updateMessage(messageId: string, content: string): Promise
 }
 
 export async function deleteMessage(messageId: string): Promise<boolean> {
+  if (!isSupabaseConfigured()) {
+    return false;
+  }
+
   try {
     const supabase = createClient();
+    if (!supabase) return false;
+
     const { error } = await supabase.from('messages').delete().eq('id', messageId);
 
     if (error) {
@@ -280,14 +330,13 @@ export async function createWorkspace(
   }
 ): Promise<Project | null> {
   if (!isSupabaseConfigured()) {
-    // Development logging
-    // eslint-disable-next-line no-console
-    console.log('Supabase not configured. Cannot create workspace.');
     return null;
   }
 
   try {
     const supabase = createClient();
+    if (!supabase) return null;
+
     const newWorkspace: DbWorkspaceInsert = {
       owner_id: ownerId,
       name,
@@ -298,8 +347,7 @@ export async function createWorkspace(
 
     const { data, error } = await supabase
       .from('workspaces')
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
-      .insert(newWorkspace)
+      .insert(newWorkspace as any)
       .select()
       .single();
 
@@ -322,6 +370,8 @@ export async function getWorkspaces(userId: string, includeArchived = false): Pr
 
   try {
     const supabase = createClient();
+    if (!supabase) return [];
+
     let query = supabase
       .from('workspaces')
       .select('*')
@@ -353,6 +403,8 @@ export async function getWorkspaceById(workspaceId: string): Promise<Project | n
 
   try {
     const supabase = createClient();
+    if (!supabase) return null;
+
     const { data, error } = await supabase
       .from('workspaces')
       .select('*')
@@ -381,9 +433,9 @@ export async function updateWorkspace(
 
   try {
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from('workspaces')
-      // @ts-expect-error - Supabase type mismatch after v0.8.0 update
+    if (!supabase) return null;
+
+    const { data, error } = await (supabase.from('workspaces') as any)
       .update({
         name: updates.name,
         description: updates.description,
@@ -415,6 +467,8 @@ export async function deleteWorkspace(workspaceId: string): Promise<boolean> {
 
   try {
     const supabase = createClient();
+    if (!supabase) return false;
+
     const { error } = await supabase.from('workspaces').delete().eq('id', workspaceId);
 
     if (error) {
@@ -482,27 +536,27 @@ function dbMessageToMessage(dbMessage: DbMessage): Message {
 // Media Generation Operations
 // ============================================================================
 
-export async function getRecentMediaGenerations(
-  userId: string,
-  limit: number = 4
-): Promise<any[]> {
+export async function getRecentMediaGenerations(userId: string, limit: number = 4): Promise<any[]> {
   if (!isSupabaseConfigured()) {
     return [];
   }
 
   try {
     const supabase = createClient();
+    if (!supabase) return [];
 
     // Query messages that contain generated images/videos
     const { data, error } = await supabase
       .from('messages')
-      .select(`
+      .select(
+        `
         id,
         content,
         created_at,
         chat_id,
         chats!inner(user_id)
-      `)
+      `
+      )
       .eq('role', 'assistant')
       .eq('chats.user_id', userId)
       .or('content.ilike.%![Generated Image]%,content.ilike.%![Generated Video]%')
@@ -515,30 +569,21 @@ export async function getRecentMediaGenerations(
     }
 
     // Parse images/videos from message content
-    return (data || []).map((msg: any) => {
-      const imageMatch = msg.content.match(/!\[Generated Image\]\((.*?)\)/);
-      const videoMatch = msg.content.match(/!\[Generated Video\]\((.*?)\)/);
-      return {
-        id: msg.id,
-        type: videoMatch ? 'video' : 'image',
-        url: imageMatch?.[1] || videoMatch?.[1] || '',
-        created_at: msg.created_at,
-        chat_id: msg.chat_id,
-      };
-    }).filter((item: any) => item.url);
+    return (data || [])
+      .map((msg: any) => {
+        const imageMatch = msg.content.match(/!\[Generated Image\]\((.*?)\)/);
+        const videoMatch = msg.content.match(/!\[Generated Video\]\((.*?)\)/);
+        return {
+          id: msg.id,
+          type: videoMatch ? 'video' : 'image',
+          url: imageMatch?.[1] || videoMatch?.[1] || '',
+          created_at: msg.created_at,
+          chat_id: msg.chat_id,
+        };
+      })
+      .filter((item: any) => item.url);
   } catch (error) {
     console.error('Exception fetching media generations:', error);
     return [];
   }
-}
-
-// ============================================================================
-// Utility Functions
-// ============================================================================
-
-export function isSupabaseConfigured(): boolean {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  return !!url && !!key && url !== 'your-project-url.supabase.co' && key !== 'your-anon-key-here';
 }

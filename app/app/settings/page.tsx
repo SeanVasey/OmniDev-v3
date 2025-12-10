@@ -69,6 +69,8 @@ export default function SettingsPage() {
       setIsLoading(true);
       try {
         const supabase = createClient();
+        if (!supabase) return;
+
         const result: { data: any; error: any } = await supabase
           .from('profiles')
           .select('preferences')
@@ -109,6 +111,11 @@ export default function SettingsPage() {
     setIsSaving(true);
     try {
       const supabase = createClient();
+      if (!supabase) {
+        toast.error('Supabase client not available');
+        return;
+      }
+
       const { error } = await (supabase.from('profiles') as any).update({
         preferences: {
           theme: preferences.theme,
