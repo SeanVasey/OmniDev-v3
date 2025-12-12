@@ -38,7 +38,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^11.3.0",
     "lucide-react": "^0.400.0",
-    "next": "^14.2.0",
+    "next": "^14.2.34",
     "ollama-ai-provider": "^1.2.0",
     "openai": "^6.9.1",
     "react": "^18.3.0",
