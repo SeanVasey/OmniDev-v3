@@ -1,6 +1,44 @@
 import type { AIModel } from '@/types';
 
 export const AI_MODELS: Record<string, AIModel> = {
+  // OpenAI - GPT-5.2 Series (December 2025) - Current Frontier Models
+  'gpt-5.2': {
+    id: 'gpt-5.2',
+    name: 'GPT-5.2 Thinking',
+    provider: 'openai',
+    contextWindow: 512000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
+    maxTokens: 64000,
+  },
+  'gpt-5.2-chat-latest': {
+    id: 'gpt-5.2-chat-latest',
+    name: 'GPT-5.2 Instant',
+    provider: 'openai',
+    contextWindow: 512000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
+    maxTokens: 64000,
+  },
+  'gpt-5.2-pro': {
+    id: 'gpt-5.2-pro',
+    name: 'GPT-5.2 Pro',
+    provider: 'openai',
+    contextWindow: 1000000,
+    supportsStreaming: true,
+    supportsVision: true,
+    supportsImageGen: false,
+    supportsThinking: true,
+    supportsResearch: true,
+    maxTokens: 128000,
+  },
+
   // OpenAI - GPT-5.1 Series (November 2025)
   'gpt-5.1': {
     id: 'gpt-5.1-2025-11-13',

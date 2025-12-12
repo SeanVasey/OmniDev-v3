@@ -50,7 +50,7 @@ export default function SettingsPage() {
     theme: 'dark',
     hapticsEnabled: true,
     notificationsEnabled: true,
-    defaultModel: 'gpt-5.1-chat',
+    defaultModel: 'gpt-5.2-chat-latest',
     autoSaveChats: true,
     compactMode: false,
   });
@@ -82,7 +82,7 @@ export default function SettingsPage() {
               theme: prefs.theme || 'dark',
               hapticsEnabled: prefs.haptics_enabled ?? true,
               notificationsEnabled: prefs.notifications_enabled ?? true,
-              defaultModel: prefs.default_model || 'gpt-5.1-chat',
+              defaultModel: prefs.default_model || 'gpt-5.2-chat-latest',
               autoSaveChats: prefs.auto_save_chats ?? true,
               compactMode: prefs.compact_mode ?? false,
             });

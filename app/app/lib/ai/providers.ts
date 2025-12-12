@@ -9,6 +9,10 @@ import { ollama } from 'ollama-ai-provider';
 
 export const AI_PROVIDERS = {
   openai: {
+    // GPT-5.2 Series (Current Frontier)
+    'gpt-5.2': openai('gpt-5.2'),
+    'gpt-5.2-chat-latest': openai('gpt-5.2-chat-latest'),
+    'gpt-5.2-pro': openai('gpt-5.2-pro'),
     // GPT-5.1 Series
     'gpt-5.1': openai('gpt-5.1-2025-11-13'),
     'gpt-5.1-chat': openai('gpt-5.1-chat-2025-11-13'),
@@ -65,7 +69,7 @@ export function getAIModel(modelId: string) {
   if (modelId.startsWith('gpt-5')) {
     return (
       AI_PROVIDERS.openai[modelId as keyof typeof AI_PROVIDERS.openai] ||
-      AI_PROVIDERS.openai['gpt-5.1']
+      AI_PROVIDERS.openai['gpt-5.2']
     );
   }
 
@@ -130,8 +134,8 @@ export function getAIModel(modelId: string) {
     return AI_PROVIDERS.local['llama-3.1-local'];
   }
 
-  // Default to GPT-5.1
-  return AI_PROVIDERS.openai['gpt-5.1'];
+  // Default to GPT-5.2 (Current Frontier Model)
+  return AI_PROVIDERS.openai['gpt-5.2'];
 }
 
 export function getSystemPrompt(contextMode: string | null): string {
