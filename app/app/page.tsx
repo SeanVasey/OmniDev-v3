@@ -51,7 +51,7 @@ const mockChats: Chat[] = [
     id: '1',
     user_id: 'user1',
     title: 'Build a React component',
-    model_id: 'gpt-5.1-chat',
+    model_id: 'gpt-5.2-chat-latest',
     is_pinned: false,
     is_archived: false,
     is_incognito: false,
@@ -74,9 +74,9 @@ const mockChats: Chat[] = [
 ];
 
 export default function HomePage() {
-  // Initialize with GPT-5.1 Chat as default
+  // Initialize with GPT-5.2 Instant as default (current frontier model)
   const [currentModel, setCurrentModel] = useState<AIModel>(
-    getModel('gpt-5.1-chat') || getModel('gpt-5.1')!
+    getModel('gpt-5.2-chat-latest') || getModel('gpt-5.2')!
   );
   const [activeContext, setActiveContext] = useState<ContextMode>(null);
   const [workspaces, setWorkspaces] = useState<Project[]>([]);

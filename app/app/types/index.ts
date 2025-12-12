@@ -212,6 +212,10 @@ export interface ModelPricing {
 }
 
 export const MODEL_PRICING: Record<string, ModelPricing> = {
+  // GPT-5.2 Series (Current Frontier)
+  'gpt-5.2': { modelId: 'gpt-5.2', inputPer1kTokens: 0.012, outputPer1kTokens: 0.036 },
+  'gpt-5.2-chat-latest': { modelId: 'gpt-5.2-chat-latest', inputPer1kTokens: 0.006, outputPer1kTokens: 0.018 },
+  'gpt-5.2-pro': { modelId: 'gpt-5.2-pro', inputPer1kTokens: 0.02, outputPer1kTokens: 0.06 },
   // GPT-5.1 Series
   'gpt-5.1': { modelId: 'gpt-5.1', inputPer1kTokens: 0.01, outputPer1kTokens: 0.03 },
   'gpt-5.1-chat': { modelId: 'gpt-5.1-chat', inputPer1kTokens: 0.005, outputPer1kTokens: 0.015 },

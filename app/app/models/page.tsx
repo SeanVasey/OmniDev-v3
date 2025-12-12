@@ -86,6 +86,18 @@ const PROVIDERS = {
 
 // Best use cases for each model
 const MODEL_USE_CASES: Record<string, { bestFor: string[]; tips: string[] }> = {
+  'gpt-5.2': {
+    bestFor: ['Advanced reasoning', 'Complex problem-solving', 'Research tasks', 'Extended thinking'],
+    tips: ['Frontier model with enhanced capabilities', 'Supports xhigh reasoning effort', 'Best for mission-critical tasks requiring deep analysis', '512K context window'],
+  },
+  'gpt-5.2-chat-latest': {
+    bestFor: ['General conversation', 'Fast responses', 'Interactive chat', 'Real-time assistance'],
+    tips: ['Optimized for speed and quality', 'Best default model for most tasks', 'Enhanced conversational abilities', 'Instant responses with frontier quality'],
+  },
+  'gpt-5.2-pro': {
+    bestFor: ['Maximum capability', 'Enterprise tasks', 'Complex projects', 'Professional use'],
+    tips: ['1M context window - largest in GPT series', 'Supports reasoning parameter control', 'xhigh reasoning effort for quality tasks', 'Best for production and critical applications'],
+  },
   'gpt-5.1': {
     bestFor: ['Complex reasoning', 'Long-form content', 'Research tasks', 'Code generation'],
     tips: ['Use for tasks requiring deep analysis', 'Enable thinking mode for complex problems', 'Great for multi-step reasoning'],
